@@ -1,4 +1,3 @@
-// @ts-check
 import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
@@ -108,8 +107,8 @@ export async function createServer(
     })
   );
   app.get("/api/print", async (req, res) => {
-    console.log(req)
-    res.status(200);
+    console.log(req);
+    res.status(200).send(req);
   });
 
   app.get("/api/products/count", async (req, res) => {
