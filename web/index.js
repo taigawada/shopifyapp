@@ -107,6 +107,10 @@ export async function createServer(
       billing: billingSettings,
     })
   );
+  app.get("/api/print", async (req, res) => {
+    console.log(req)
+    res.status(200);
+  });
 
   app.get("/api/products/count", async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(
