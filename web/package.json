@@ -5,7 +5,7 @@
     "scripts": {
         "debug": "node --inspect-brk index.ts",
         "dev": "cross-env NODE_ENV=development nodemon -L --ignore ./frontend & graphql-codegen-esm --config codegen.yml --watch admin-graphql/documents/*.graphql",
-        "serve": "cross-env NODE_ENV=production ts-node --esm index.ts",
+        "serve": "cross-env NODE_ENV=production ts-node --esm index.js",
         "codegen": "graphql-codegen-esm --config codegen.yml"
     },
     "type": "module",
