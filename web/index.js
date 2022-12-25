@@ -17,7 +17,7 @@ import prisma from './prisma';
 
 const USE_ONLINE_TOKENS = false;
 
-const PORT = parseInt(process.env.BACKEND_PORT! || process.env.PORT!, 10);
+const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 
 // TODO: There should be provided by env vars
 const DEV_INDEX_PATH = `${process.cwd()}/frontend/`;
@@ -26,16 +26,16 @@ const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`;
 const DB_PATH = `${process.cwd()}/database.sqlite`;
 
 Shopify.Context.initialize({
-    API_KEY: process.env.SHOPIFY_API_KEY!,
-    API_SECRET_KEY: process.env.SHOPIFY_API_SECRET!,
-    SCOPES: process.env.SCOPES!.split(','),
-    HOST_NAME: process.env.HOST!.replace(/https?:\/\//, ''),
-    HOST_SCHEME: process.env.HOST!.split('://')[0],
+    API_KEY: process.env.SHOPIFY_API_KEY,
+    API_SECRET_KEY: process.env.SHOPIFY_API_SECRET,
+    SCOPES: process.env.SCOPES.split(','),
+    HOST_NAME: process.env.HOST.replace(/https?:\/\//, ''),
+    HOST_SCHEME: process.env.HOST.split('://')[0],
     API_VERSION: LATEST_API_VERSION,
     IS_EMBEDDED_APP: true,
     SESSION_STORAGE:
         process.env.NODE_ENV === 'production'
-            ? new Shopify.Session.PostgreSQLSessionStorage(process.env.DATABASE_URL as any)
+            ? new Shopify.Session.PostgreSQLSessionStorage(process.env.DATABASE_URL)
             : new Shopify.Session.SQLiteSessionStorage(DB_PATH),
     ...(process.env.SHOP_CUSTOM_DOMAIN && {
         CUSTOM_SHOP_DOMAINS: [process.env.SHOP_CUSTOM_DOMAIN],
@@ -98,11 +98,9 @@ export async function createServer(
             await Shopify.Webhooks.Registry.process(req, res);
             console.log(`Webhook processed, returned status code 200`);
         } catch (e) {
-            if (e instanceof Error) {
-                console.log(`Failed to process webhook: ${e.message}`);
-                if (!res.headersSent) {
-                    res.status(500).send(e.message);
-                }
+            console.log(`Failed to process webhook: ${e.message}`);
+            if (!res.headersSent) {
+                res.status(500).send(e.message);
             }
         }
     });
@@ -141,16 +139,14 @@ export async function createServer(
             app.get('use-online-tokens')
         );
         let status = 200;
-        let error: null | string = null;
+        let error = null;
 
         try {
             await productCreator(session);
         } catch (e) {
-            if (e instanceof Error) {
-                console.log(`Failed to process products/create: ${e.message}`);
-                status = 500;
-                error = e.message;
-            }
+            console.log(`Failed to process products/create: ${e.message}`);
+            status = 500;
+            error = e.message;
         }
         res.status(status).send({ success: status === 200, error });
     });
