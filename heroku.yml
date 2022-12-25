@@ -1,5 +1,9 @@
 build:
-  docker:
-    web: Dockerfile
-  config:
-    SHOPIFY_API_KEY: b1bfbe63a6547c352306d8675e9d712d
+    docker:
+        web: Dockerfile
+    config:
+        SHOPIFY_API_KEY: b1bfbe63a6547c352306d8675e9d712d
+
+release:
+    command:
+        - npx prisma migrate deploy
