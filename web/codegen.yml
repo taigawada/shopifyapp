@@ -1,0 +1,10 @@
+overwrite: true
+schema: graphql-admin/schema/admin-schema.json
+documents: graphql-admin/documents/*.graphql
+emitLegacyCommonJSImports: false
+generates:
+    graphql-admin/generated/sdk.ts:
+        plugins:
+            - typescript
+            - typescript-operations
+            - typescript-graphql-request

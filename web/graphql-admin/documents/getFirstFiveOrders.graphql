@@ -1,0 +1,9 @@
+query getFirstFiveOrders {
+    orders(first: 5) {
+        edges {
+            node {
+                id
+            }
+        }
+    }
+}

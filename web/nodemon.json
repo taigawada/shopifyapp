@@ -1,0 +1,7 @@
+{
+    "restartable": "rs",
+    "watch": ["./"],
+    "ext": "js, ts, json",
+    "ignore": ["tests/**/*.ts"],
+    "exec": "ts-node --esm ./index.ts"
+}
