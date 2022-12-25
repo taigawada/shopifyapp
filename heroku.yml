@@ -5,5 +5,6 @@ build:
         SHOPIFY_API_KEY: b1bfbe63a6547c352306d8675e9d712d
 
 release:
+    image: worker
     command:
         - npx prisma migrate deploy
