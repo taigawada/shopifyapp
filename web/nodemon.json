@@ -3,5 +3,5 @@
     "watch": ["./"],
     "ext": "js, ts, json",
     "ignore": ["tests/**/*.ts"],
-    "exec": "ts-node --esm ./index.js"
+    "exec": "ts-node --esm ./index.ts"
 }
