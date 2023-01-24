@@ -39,7 +39,7 @@ export default function ManageCode() {
     const onFileRejected = (filename: string) => {
         console.log(filename);
     };
-    const host = location.origin.replace(/^https/, 'ws');
+    const host = location.origin.replace(/^https/, 'wss');
     const conn = new WebSocket(host);
 
     conn.onopen = (Event) => {
