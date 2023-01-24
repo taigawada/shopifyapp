@@ -110,8 +110,8 @@ export default function ManageCode() {
                     />
                 </Stack.Item>
             </Stack>
-            {/* <Button onClick={handleDelete}>削除</Button>
-            <Button onClick={handleTest}>テスト</Button> */}
+            <Button onClick={handleDelete}>削除</Button>
+            <Button onClick={handleTest}>テスト</Button>
         </Page>
     );
 }

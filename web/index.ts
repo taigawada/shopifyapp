@@ -21,7 +21,6 @@ import mailPrintApiEndpoints from './middleware/mail-print-api';
 // import expressWs from 'express-ws';
 // import { websocket } from './helpers/websocket';
 import { WebSocketServer } from 'ws';
-import { createServer } from 'http';
 
 const USE_ONLINE_TOKENS = false;
 
@@ -136,14 +135,6 @@ export async function createApp(
     // const websocketApp = expressWs(app).app;
     // websocket(websocketApp);
 
-    // const wss = new WebSocketServer({ noServer: true });
-    // wss.on('connection', function connection(ws) {
-    //     console.log(ws);
-    //     ws.on('message', function message(data) {
-    //         console.log(data);
-    //     });
-    // });
-
     app.get('/api/products/count', async (req, res) => {
         const session = await Shopify.Utils.loadCurrentSession(
             req,
@@ -241,7 +232,7 @@ createApp().then((app) => {
     const server = app.listen(PORT, () => {
         console.log(`Listening on ${PORT}`);
     });
-    const wss = new WebSocketServer({ server });
+    const wss = new WebSocketServer({ server, path: '/ws' });
     wss.on('connection', (ws) => {
         console.log('Client connected');
         ws.on('close', () => console.log('Client disconnected'));
