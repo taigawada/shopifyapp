@@ -44,12 +44,11 @@ export default function ManageCode() {
 
     conn.onopen = (Event) => {
         console.log(Event);
+        console.log('接続成功');
     };
-    console.log(conn);
     conn.onmessage = function (msg) {
         console.log(msg);
     };
-    conn.onerror = (event: Event) => console.log(event);
     const handleDelete = async () => {
         // const result = await authenticatedFetch('/websocket/test', {});
         // console.log(result);
