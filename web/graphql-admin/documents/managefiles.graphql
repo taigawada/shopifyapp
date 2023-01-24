@@ -1,0 +1,67 @@
+mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
+    stagedUploadsCreate(input: $input) {
+        stagedTargets {
+            resourceUrl
+            url
+            parameters {
+                name
+                value
+            }
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}
+
+mutation fileCreate($files: [FileCreateInput!]!) {
+    fileCreate(files: $files) {
+        files {
+            alt
+            fileStatus
+            ... on GenericFile {
+                __typename
+                id
+                url
+            }
+            ... on MediaImage {
+                __typename
+                id
+                image {
+                    originalSrc
+                }
+            }
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}
+mutation fileDelete($fileIds: [ID!]!) {
+    fileDelete(fileIds: $fileIds) {
+        deletedFileIds
+        userErrors {
+            field
+            message
+        }
+    }
+}
+query getFileUrl($id: ID!) {
+    node(id: $id) {
+        ... on GenericFile {
+            __typename
+            fileStatus
+            id
+            url
+        }
+        ... on MediaImage {
+            __typename
+            id
+            image {
+                originalSrc
+            }
+        }
+    }
+}

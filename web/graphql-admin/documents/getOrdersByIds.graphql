@@ -1,0 +1,9 @@
+query getOrdersByIds($input: [ID!]!) {
+    nodes(ids: $input) {
+        id
+        ... on Order {
+            __typename
+            name
+        }
+    }
+}
