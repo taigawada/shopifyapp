@@ -18387,16 +18387,28 @@ export type Mutation = {
   /** Updates a saved search. */
   savedSearchUpdate?: Maybe<SavedSearchUpdatePayload>;
   /**
+   * <div class="note"><h4>Theme app extensions</h4>
+   *   <p>Your app might not pass App Store review if it uses script tags instead of theme app extensions. All new apps, and apps that integrate with Online Store 2.0 themes, should use theme app extensions, such as app blocks or app embed blocks. Script tags are an alternative you can use with only vintage themes. <a href="/apps/online-store#what-integration-method-should-i-use" target="_blank">Learn more</a>.</p></div>
+   *
+   *
    * Creates a new script tag.
    *
    */
   scriptTagCreate?: Maybe<ScriptTagCreatePayload>;
   /**
+   * <div class="note"><h4>Theme app extensions</h4>
+   *   <p>Your app might not pass App Store review if it uses script tags instead of theme app extensions. All new apps, and apps that integrate with Online Store 2.0 themes, should use theme app extensions, such as app blocks or app embed blocks. Script tags are an alternative you can use with only vintage themes. <a href="/apps/online-store#what-integration-method-should-i-use" target="_blank">Learn more</a>.</p></div>
+   *
+   *
    * Deletes a script tag.
    *
    */
   scriptTagDelete?: Maybe<ScriptTagDeletePayload>;
   /**
+   * <div class="note"><h4>Theme app extensions</h4>
+   *   <p>Your app might not pass App Store review if it uses script tags instead of theme app extensions. All new apps, and apps that integrate with Online Store 2.0 themes, should use theme app extensions, such as app blocks or app embed blocks. Script tags are an alternative you can use with only vintage themes. <a href="/apps/online-store#what-integration-method-should-i-use" target="_blank">Learn more</a>.</p></div>
+   *
+   *
    * Updates a script tag.
    *
    */
@@ -26946,9 +26958,23 @@ export type QueryRoot = {
   publications: PublicationConnection;
   /** Returns a Refund resource by ID. */
   refund?: Maybe<Refund>;
-  /** Lookup a script tag resource by ID. */
+  /**
+   * <div class="note"><h4>Theme app extensions</h4>
+   *   <p>Your app might not pass App Store review if it uses script tags instead of theme app extensions. All new apps, and apps that integrate with Online Store 2.0 themes, should use theme app extensions, such as app blocks or app embed blocks. Script tags are an alternative you can use with only vintage themes. <a href="/apps/online-store#what-integration-method-should-i-use" target="_blank">Learn more</a>.</p></div>
+   *
+   *
+   * Lookup a script tag resource by ID.
+   *
+   */
   scriptTag?: Maybe<ScriptTag>;
-  /** A list of script tags. */
+  /**
+   * <div class="note"><h4>Theme app extensions</h4>
+   *   <p>Your app might not pass App Store review if it uses script tags instead of theme app extensions. All new apps, and apps that integrate with Online Store 2.0 themes, should use theme app extensions, such as app blocks or app embed blocks. Script tags are an alternative you can use with only vintage themes. <a href="/apps/online-store#what-integration-method-should-i-use" target="_blank">Learn more</a>.</p></div>
+   *
+   *
+   * A list of script tags.
+   *
+   */
   scriptTags: ScriptTagConnection;
   /** The Customer Segment. */
   segment?: Maybe<Segment>;
@@ -28959,6 +28985,10 @@ export type ScriptDiscountApplication = DiscountApplication & {
 };
 
 /**
+ * <div class="note"><h4>Theme app extensions</h4>
+ *   <p>Your app might not pass App Store review if it uses script tags instead of theme app extensions. All new apps, and apps that integrate with Online Store 2.0 themes, should use theme app extensions, such as app blocks or app embed blocks. Script tags are an alternative you can use with only vintage themes. <a href="/apps/online-store#what-integration-method-should-i-use" target="_blank">Learn more</a>.</p></div>
+ *
+ *
  * A script tag represents remote JavaScript code that is loaded into the pages of a shop's storefront or the order status page of checkout.
  *
  */
@@ -36640,7 +36670,7 @@ export enum WebhookSubscriptionTopic {
   PaymentTermsUpdate = 'PAYMENT_TERMS_UPDATE',
   /** The webhook topic for `products/create` events. Occurs whenever a product is created. Requires the `read_products` scope. */
   ProductsCreate = 'PRODUCTS_CREATE',
-  /** The webhook topic for `products/delete` events. Occurs whenever a product publication is deleted. Requires the `read_products` scope. */
+  /** The webhook topic for `products/delete` events. Occurs whenever a product is deleted. Requires the `read_products` scope. */
   ProductsDelete = 'PRODUCTS_DELETE',
   /** The webhook topic for `products/update` events. Occurs whenever a product is updated, or whenever a product is ordered, or whenever a variant is added, removed, or updated. Requires the `read_products` scope. */
   ProductsUpdate = 'PRODUCTS_UPDATE',

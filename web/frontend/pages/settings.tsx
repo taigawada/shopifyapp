@@ -40,7 +40,7 @@ export default function ManageCode() {
         console.log(filename);
     };
     const host = location.origin.replace(/^https/, 'wss');
-    const conn = new WebSocket(host);
+    const conn = new WebSocket(host + '/ws');
 
     conn.onopen = (Event) => {
         console.log(Event);
