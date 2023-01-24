@@ -1,17 +1,38 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgres"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model ShopUser {
+  id                 String  @id @default(cuid())
+  shop               String  @unique
+  general_settings   GeneralSettings?
+}
+
+model GeneralSettings {
+  shop                String   @unique
+  user                ShopUser @relation(fields: [shop], references: [shop])
+  nagagata4_template  String   @db.VarChar(255) @default("")
+  nagagata3_template  String   @db.VarChar(255) @default("")
+  letterpack_template String   @db.VarChar(255) @default("")
+  logo_image          String   @db.VarChar(255) @default("")
+  logo_text           String   @db.VarChar(255) @default("")
+  logo_caption1       String   @db.Text @default("")
+  logo_caption2       String   @db.Text @default("")
+  logo_caption3       String   @db.Text @default("")
+}
+
+model shopify_sessions {
+  id               String  @id @db.VarChar(255)
+  shop             String  @db.VarChar(255)
+  state            String  @db.VarChar(255)
+  isonline         Boolean
+  scope            String? @db.VarChar(255)
+  expires          Int?
+  onlineaccessinfo String? @db.VarChar(255)
+  accesstoken      String? @db.VarChar(255)
 }
