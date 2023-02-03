@@ -21,7 +21,7 @@ export type Records = {
         provinceCode: string;
         city: string;
         address1: string;
-        address2: string;
+        address2: string | null;
         firstName: string;
         lastName: string;
     };
@@ -83,7 +83,7 @@ export const generatePdf = async (
         address1: `${provinceCode(inputData.shippingAddress.provinceCode)} ${
             inputData.shippingAddress.city
         } ${inputData.shippingAddress.address1}`,
-        address2: inputData.shippingAddress.address2,
+        address2: inputData.shippingAddress.address2 ? inputData.shippingAddress.address2 : '',
         name: `${inputData.shippingAddress.lastName} ${inputData.shippingAddress.firstName} 様`,
         logo: fixedData.logo,
         logoText: fixedData.logo_text,
