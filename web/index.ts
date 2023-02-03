@@ -160,6 +160,10 @@ export async function createApp(
         }
         let appInstalled = await AppInstallations.includes(shop);
 
+        if (!appInstalled && !req.originalUrl.match(/^\/exitiframe/i)) {
+            return redirectToAuth(req, res, app);
+        }
+
         // this section is my custom installation methods.
         if (appInstalled && beforeInstallShop.includes(shop)) {
             // This is the function that is executed only during installation.
@@ -178,10 +182,6 @@ export async function createApp(
             if (!beforeInstallShop.includes(shop)) {
                 beforeInstallShop.push(shop);
             }
-        }
-
-        if (!appInstalled && !req.originalUrl.match(/^\/exitiframe/i)) {
-            return redirectToAuth(req, res, app);
         }
 
         if (Shopify.Context.IS_EMBEDDED_APP && req.query.embedded !== '1') {
