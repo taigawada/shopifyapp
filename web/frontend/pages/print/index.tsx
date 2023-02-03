@@ -10,7 +10,7 @@ import { notFoundImage } from '../../assets';
 
 import type { GetOrdersByIdsQuery } from '../../../graphql-admin/index';
 
-import { MailPrintForm } from '../../components/DownloadPDF';
+import { DownloadPDF } from '../../components/DownloadPDF';
 
 export interface GetOrders {
     accepted: GetOrdersByIdsQuery['nodes'];
@@ -66,8 +66,6 @@ export default function Print() {
         });
         const requestURL = `/api/orders?${requestQuery.toString()}`;
         const { data, isLoading } = useAppQuery<GetOrders>(requestURL);
-        console.log(data);
-
         if (isLoading || !data) {
             return (
                 <Page>
@@ -85,6 +83,6 @@ export default function Print() {
                 </Page>
             );
         }
-        return <MailPrintForm orderData={data} />;
+        return <DownloadPDF orderData={data} />;
     }
 }

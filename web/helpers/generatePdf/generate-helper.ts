@@ -11,7 +11,8 @@ export const generate = async (
     req: any,
     res: any,
     records: Records,
-    envelopeType: EnvelopeType
+    envelopeType: EnvelopeType,
+    productName: string | undefined
 ) => {
     const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'));
     if (!session) return res.sendStatus(400);
@@ -29,6 +30,7 @@ export const generate = async (
         const fixed = {
             logo: logo,
             ...fixedData,
+            productName: productName ? productName : '',
         };
         const fontSizeRatio = 1;
         const result = await generatePdf(template, records, fixed, fontSizeRatio);
@@ -87,7 +89,12 @@ export const preview = async (
         ['N4template', 'N3template', 'LPtemplate'].map(async (envelopeType) => {
             const template = await getTemplateJson(templates[envelopeType]);
             try {
-                const pdf = await generatePdf(template, sampleData, { logo: logo, ...fixed }, 1);
+                const pdf = await generatePdf(
+                    template,
+                    sampleData,
+                    { logo: logo, ...fixed, productName: '衣類' },
+                    1
+                );
                 return pdf;
             } catch (e) {
                 console.log(e);

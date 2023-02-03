@@ -1,6 +1,17 @@
 import { useState, useCallback, useEffect, useContext } from 'react';
 import type { FunctionComponent, SVGProps } from 'react';
-import { Text, Icon, Stack, Card, Banner, List, TextField, Page } from '@shopify/polaris';
+import {
+    Text,
+    Icon,
+    Stack,
+    Card,
+    Banner,
+    List,
+    TextField,
+    Page,
+    Layout,
+    FormLayout,
+} from '@shopify/polaris';
 import { EmailMajor, SoftPackMajor, PageDownMajor } from '@shopify/polaris-icons';
 import { css } from '@emotion/react';
 import { Accordion } from './parts/Accordion';
@@ -10,8 +21,26 @@ import { TitleBar, useAppBridge } from '@shopify/app-bridge-react';
 import { Redirect } from '@shopify/app-bridge/actions';
 import type { GetOrders } from '../pages/print';
 import { useAuthenticatedFetch } from '../hooks';
+import { format } from 'date-fns';
+import { useI18n } from '@shopify/react-i18n';
 
-export const MailPrintForm = ({ orderData }: { orderData: GetOrders }) => {
+export const DownloadPDF = ({ orderData }: { orderData: GetOrders }) => {
+    const jp = {
+        InvalidKeys: {
+            zip: '郵便番号',
+            provinceCode: '都道府県',
+            city: '市区町村',
+            address1: '住所1',
+            address2: '住所2',
+            firstName: '名',
+            lastName: '性',
+        },
+    };
+    const [i18n] = useI18n({
+        id: 'InvalidKeys',
+        fallback: jp,
+        translations: () => jp,
+    });
     const appBridge = useAppBridge();
     const redirect = Redirect.create(appBridge);
     const handlebackToOrders = useCallback(
@@ -37,10 +66,12 @@ export const MailPrintForm = ({ orderData }: { orderData: GetOrders }) => {
         value: '',
         validates: [notEmpty('必須項目です')],
     });
-
+    const [isDownloading, setIsdownloading] = useState(false);
     const handleDownload = async () => {
+        setIsdownloading(true);
         const requestQuery = new URLSearchParams();
-        requestQuery.append('envelopeType', 'N4template');
+        requestQuery.append('envelopeType', ['N4template', 'N3template', 'LPtemplate'][selected]);
+        requestQuery.append('productName', productName.value);
         const requestURL = `/api/download?${requestQuery.toString()}`;
         const form = new FormData();
         form.append('records', JSON.stringify(orderData.accepted));
@@ -49,6 +80,7 @@ export const MailPrintForm = ({ orderData }: { orderData: GetOrders }) => {
             body: form,
         });
         if (!response.ok) {
+            setIsdownloading(false);
             toasts.showToast('ダウンロードに失敗しました', true);
             return;
         }
@@ -56,10 +88,14 @@ export const MailPrintForm = ({ orderData }: { orderData: GetOrders }) => {
         const url = URL.createObjectURL(new Blob([arrayBuffer], { type: 'application/pdf' }));
         const link = document.createElement('a');
         link.target = '_blank';
-        link.download = 'sample.pdf';
+        link.download = `${['長型4号', '長型3号', 'レターパック'][selected]} ${format(
+            new Date(),
+            'yyyy-MM-dd HH.mm.ss'
+        )}.pdf`;
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
+        setIsdownloading(false);
         toasts.showToast('ダウンロードが完了しました');
     };
 
@@ -162,6 +198,7 @@ export const MailPrintForm = ({ orderData }: { orderData: GetOrders }) => {
                 primaryAction={{
                     content: 'ダウンロード',
                     disabled: selected === 2,
+                    loading: isDownloading,
                     onAction: handleDownload,
                 }}
                 secondaryActions={[{ content: '注文管理に戻る', onAction: handlebackToOrders }]}
@@ -170,7 +207,8 @@ export const MailPrintForm = ({ orderData }: { orderData: GetOrders }) => {
                 <Card
                     primaryFooterAction={{
                         content: 'ダウンロード',
-                        disabled: selected === 2,
+                        disabled: selected === 2 && !productName.value,
+                        loading: isDownloading,
                         onAction: handleDownload,
                     }}
                     secondaryFooterActions={[
@@ -186,13 +224,17 @@ export const MailPrintForm = ({ orderData }: { orderData: GetOrders }) => {
                                     orderData.rejected.length
                                 }件の注文を正しく読み込めませんでした。`}
                                 status="warning"
-                                // action={{ content: '詳しく見る' }}
                             >
                                 <List>
                                     {orderData.rejected.map((rejectedOrders) => (
                                         <List.Item key={rejectedOrders.name}>
-                                            {rejectedOrders.name} (
-                                            {rejectedOrders.invalidKeys.join(', ')})
+                                            {rejectedOrders.name} (不足項目:{'  '}
+                                            {rejectedOrders.invalidKeys
+                                                .map((key) =>
+                                                    i18n.translate(key, { scope: 'InvalidKeys' })
+                                                )
+                                                .join(', ')}
+                                            )
                                         </List.Item>
                                     ))}
                                 </List>
@@ -206,7 +248,7 @@ export const MailPrintForm = ({ orderData }: { orderData: GetOrders }) => {
                             </Banner>
                         )}
                     </Card.Section>
-                    <div css={css({ width: '80%', margin: ' 1rem auto' })}>
+                    <div css={css({ width: '80%', margin: '0 auto' })}>
                         <Stack distribution="fillEvenly">
                             {selectContent.map((selectBox, index) => (
                                 <div
@@ -235,31 +277,32 @@ export const MailPrintForm = ({ orderData }: { orderData: GetOrders }) => {
                         onAnimationEnded={handleAnimationEnd}
                     >
                         <div css={printSizeAccordionCss}>
-                            <div css={css({ width: '80%', margin: '0 auto' })}>
-                                {selected === 2 ? (
+                            <Stack vertical alignment="center">
+                                <Stack alignment="center" distribution="center">
+                                    <Icon source={PageDownMajor} color="primary"></Icon>
+                                    <Text as="h2" variant="bodyMd" fontWeight="medium">
+                                        {['長型4号', '長型3号', 'レターパック'][selected]}
+                                        のPDFをダウンロードします。
+                                    </Text>
+                                </Stack>
+                                <Text as="p" variant="bodyMd">
+                                    10秒ほど時間がかかる場合があります
+                                </Text>
+                            </Stack>
+                            {selected === 2 ? (
+                                <Stack distribution="fill" alignment="center">
+                                    <Stack.Item></Stack.Item>
                                     <TextField
                                         label="品名を入力してください"
                                         autoComplete="off"
                                         placeholder="衣類"
                                         {...productName}
                                     />
-                                ) : (
-                                    <></>
-                                )}
-                                <div css={css({ margin: 'var(--p-space-2)' })}>
-                                    <Text variant="bodyMd" as="h4" alignment="center">
-                                        以下のファイル名で保存されます
-                                    </Text>
-                                </div>
-                                <div css={css({ margin: 'var(--p-space-2)' })}>
-                                    <Stack alignment="center" distribution="center">
-                                        <Icon source={PageDownMajor} color="primary"></Icon>
-                                        <Text as="h2" variant="bodyMd" fontWeight="medium">
-                                            {'2023-1-10_#1101-#0123_nagagata4gou.pdf'}
-                                        </Text>
-                                    </Stack>
-                                </div>
-                            </div>
+                                    <Stack.Item></Stack.Item>
+                                </Stack>
+                            ) : (
+                                <></>
+                            )}
                         </div>
                     </Accordion>
                 </Card>

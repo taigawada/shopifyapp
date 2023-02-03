@@ -1,5 +1,5 @@
 import type { Express } from 'express';
-import { isEmpty } from 'lodash-es';
+import { head, isEmpty } from 'lodash-es';
 import type { Multer } from 'multer';
 import { fetchOrders } from '../helpers/fetch-orders.js';
 import {
@@ -20,7 +20,11 @@ export default function mailPrintApiEndpoints(app: Express, multer: Multer) {
     };
     app.post('/api/download', multer.none(), async (req, res) => {
         const envelopeType = req.query.envelopeType;
+        const productName = toQueryArray(req.query.productName);
         if (!isEnvelopeType(envelopeType)) {
+            return res.sendStatus(400);
+        }
+        if (envelopeType === 'LPtemplate' && !productName) {
             return res.sendStatus(400);
         }
         let records: Records = [];
@@ -29,7 +33,7 @@ export default function mailPrintApiEndpoints(app: Express, multer: Multer) {
         } catch (e) {
             res.status(400).send(e);
         }
-        generate(app, req, res, records, envelopeType);
+        generate(app, req, res, records, envelopeType, head(productName));
     });
     app.post('/api/preview', multer.none(), async (req, res) => {
         let templates: Templates | undefined;

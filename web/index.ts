@@ -7,9 +7,8 @@ import { Shopify, LATEST_API_VERSION } from '@shopify/shopify-api';
 import applyAuthMiddleware from './middleware/auth.js';
 import verifyRequest from './middleware/verify-request.js';
 import { setupGDPRWebHooks } from './gdpr.js';
-import productCreator from './helpers/product-creator.js';
 import redirectToAuth from './helpers/redirect-to-auth.js';
-import { BillingInterval } from './helpers/ensure-billing.js';
+// import { BillingInterval } from './helpers/ensure-billing.js';
 
 import { AppInstallations } from './app_installations.js';
 
@@ -109,6 +108,11 @@ export async function createApp(
             }
         }
     });
+    app.get('/api/templates/:template', async (req, res) => {
+        const template = req.params.template;
+        console.log(template);
+        res.download(`assets/${template}.json`);
+    });
 
     // All endpoints after this point will require an active session
     app.use(
@@ -117,44 +121,11 @@ export async function createApp(
             billing: billingSettings,
         })
     );
+
     const multer = useMulter({ storage: memoryStorage() });
-    generalApiEndpoints(app, multer);
+
     mailPrintApiEndpoints(app, multer);
-
-    app.get('/api/products/count', async (req, res) => {
-        const session = await Shopify.Utils.loadCurrentSession(
-            req,
-            res,
-            app.get('use-online-tokens')
-        );
-        const { Product } = await import(
-            `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
-        );
-
-        const countData = await Product.count({ session });
-        res.status(200).send(countData);
-    });
-
-    app.get('/api/products/create', async (req, res) => {
-        const session = await Shopify.Utils.loadCurrentSession(
-            req,
-            res,
-            app.get('use-online-tokens')
-        );
-        let status = 200;
-        let error: null | string = null;
-
-        try {
-            await productCreator(session);
-        } catch (e) {
-            if (e instanceof Error) {
-                console.log(`Failed to process products/create: ${e.message}`);
-                status = 500;
-                error = e.message;
-            }
-        }
-        res.status(status).send({ success: status === 200, error });
-    });
+    generalApiEndpoints(app, multer);
 
     // All endpoints after this point will have access to a request.body
     // attribute, as a result of the express.json() middleware
@@ -180,6 +151,8 @@ export async function createApp(
         app.use(serveStatic(PROD_INDEX_PATH, { index: false }));
     }
 
+    let beforeInstallShop: string[] = [];
+
     app.use('/*', async (req, res, next) => {
         if (typeof req.query.shop !== 'string') {
             res.status(500);
@@ -193,13 +166,22 @@ export async function createApp(
         }
         let appInstalled = await AppInstallations.includes(shop);
 
+        // this section is my custom installation methods.
+        if (!appInstalled) {
+            beforeInstallShop.push(shop);
+        }
+        if (beforeInstallShop.includes(shop)) {
+            // This is the function that is executed only during installation.
+            await AppInstallations.init(shop);
+            beforeInstallShop = beforeInstallShop.filter((value) => value !== shop);
+        }
+
         if (!appInstalled && !req.originalUrl.match(/^\/exitiframe/i)) {
             return redirectToAuth(req, res, app);
         }
 
         if (Shopify.Context.IS_EMBEDDED_APP && req.query.embedded !== '1') {
             const embeddedUrl = Shopify.Utils.getEmbeddedAppUrl(req);
-
             return res.redirect(embeddedUrl + req.path);
         }
 
@@ -208,11 +190,11 @@ export async function createApp(
         return res.status(200).set('Content-Type', 'text/html').send(readFileSync(htmlFile));
     });
 
-    return app;
+    return { app };
 }
 
-createApp().then((app) => {
-    const server = app.listen(PORT, () => {
+createApp().then(({ app }) => {
+    app.listen(PORT, () => {
         console.log(`Listening on ${PORT}`);
     });
 });

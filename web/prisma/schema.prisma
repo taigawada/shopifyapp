@@ -24,9 +24,9 @@ model References {
   N3template    String          @default("")
   LPtemplate    String          @default("")
   logo_image    LogoImageLogs[]
-  logo_text     String          @default("") @db.VarChar(255)
-  logo_caption1 String          @default("")
-  logo_caption2 String          @default("")
+  logo_text     String          @default("chocolat lumière") @db.VarChar(255)
+  logo_caption1 String          @default("〒101-8301 東京都千代田区神田駿河台1丁目1")
+  logo_caption2 String          @default("アイドルコピーダンスサークル『chocolat lumière』")
   logo_caption3 String          @default("")
 }
 

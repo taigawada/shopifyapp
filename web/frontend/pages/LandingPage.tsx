@@ -1,4 +1,5 @@
 import {
+    Button,
     Card,
     Page,
     Layout,
@@ -30,7 +31,6 @@ export default function LandingPage() {
     const redirect = Redirect.create(appBridge);
 
     const { data, isLoading } = useAppQuery<Settings>('/api/reference');
-
     return (
         <Page fullWidth>
             <TitleBar title="chocolatlumiere" />

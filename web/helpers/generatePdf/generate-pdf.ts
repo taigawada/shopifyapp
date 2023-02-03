@@ -7,7 +7,6 @@ import { provinceCode } from './convert-province-code.js';
 interface PdfMe {
     generate: (preps: GenerateProps) => Promise<Uint8Array>;
 }
-
 const { generate }: PdfMe = require('@pdfme/generator');
 
 import { createCanvas, registerFont } from 'canvas';
@@ -34,6 +33,7 @@ export interface FixedData {
     logo_caption1: string;
     logo_caption2: string;
     logo_caption3: string;
+    productName: string;
 }
 
 const zipcodeToImage = async (zipcode: string, fontSizeRatio: number) => {
@@ -90,6 +90,7 @@ export const generatePdf = async (
         logoCaption1: fixedData.logo_caption1,
         logoCaption2: fixedData.logo_caption2,
         logoCaption3: fixedData.logo_caption3,
+        productName: fixedData.productName,
     }));
     const inputs = await Promise.all(inputDatas).catch((e) => Promise.reject(e));
     const pdf = await generate({ template, inputs, options: { font: font } }).catch((e) =>

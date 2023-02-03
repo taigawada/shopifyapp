@@ -6,7 +6,6 @@ import { useAppQuery } from '../../hooks';
 export default function ReferencesPage() {
     const utils = useContext(Utils);
     const { data, isLoading } = useAppQuery<ReferencesFetch>('/api/reference');
-    if (!isLoading) console.log(data);
     const breadcrumbs = [{ url: '/', content: 'chocolat lumière' }];
     return !data || isLoading ? (
         <ReferencesSkeleton breadcrumbs={breadcrumbs} />

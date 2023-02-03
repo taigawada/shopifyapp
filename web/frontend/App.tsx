@@ -12,6 +12,7 @@ import {
     ToastsProvider,
 } from './components';
 import { AppProvider, Frame } from '@shopify/polaris';
+import { I18nContext, I18nManager } from '@shopify/react-i18n';
 import translations from '@shopify/polaris/locales/ja.json';
 
 const config = {
@@ -43,6 +44,7 @@ export default function App() {
             );
         }
     };
+    const i18nManager = new I18nManager({ locale: 'ja' });
 
     // Any .tsx or .jsx files in /pages will become a route
     // See documentation for <Routes /> for more info
@@ -52,27 +54,29 @@ export default function App() {
     return (
         <PolarisProvider>
             <BrowserRouter>
-                <AppProvider i18n={translations} linkComponent={LinkComponent}>
-                    <AppBridgeProvider>
-                        <QueryProvider>
-                            <UtilsProvider>
-                                <NavigationMenu
-                                    navigationLinks={[
-                                        {
-                                            label: '封筒PDF印刷設定',
-                                            destination: '/reference',
-                                        },
-                                    ]}
-                                />
-                                <Frame>
-                                    <ToastsProvider>
-                                        <Routes pages={pages} />
-                                    </ToastsProvider>
-                                </Frame>
-                            </UtilsProvider>
-                        </QueryProvider>
-                    </AppBridgeProvider>
-                </AppProvider>
+                <I18nContext.Provider value={i18nManager}>
+                    <AppProvider i18n={translations} linkComponent={LinkComponent}>
+                        <AppBridgeProvider>
+                            <QueryProvider>
+                                <UtilsProvider>
+                                    <NavigationMenu
+                                        navigationLinks={[
+                                            {
+                                                label: '封筒PDF印刷設定',
+                                                destination: '/reference',
+                                            },
+                                        ]}
+                                    />
+                                    <Frame>
+                                        <ToastsProvider>
+                                            <Routes pages={pages} />
+                                        </ToastsProvider>
+                                    </Frame>
+                                </UtilsProvider>
+                            </QueryProvider>
+                        </AppBridgeProvider>
+                    </AppProvider>
+                </I18nContext.Provider>
             </BrowserRouter>
         </PolarisProvider>
     );
