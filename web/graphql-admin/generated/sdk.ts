@@ -36864,7 +36864,7 @@ export type ImageCreateMutationVariables = Exact<{
 }>;
 
 
-export type ImageCreateMutation = { __typename?: 'Mutation', fileCreate?: { __typename?: 'FileCreatePayload', files?: Array<{ __typename?: 'GenericFile', alt?: string | null, fileStatus: FileStatus, createdAt: any } | { __typename: 'MediaImage', id: string, alt?: string | null, fileStatus: FileStatus, createdAt: any, image?: { __typename?: 'Image', originalSrc: any } | null } | { __typename?: 'Video', alt?: string | null, fileStatus: FileStatus, createdAt: any }> | null, userErrors: Array<{ __typename?: 'FilesUserError', field?: Array<string> | null, message: string }> } | null };
+export type ImageCreateMutation = { __typename?: 'Mutation', fileCreate?: { __typename?: 'FileCreatePayload', files?: Array<{ __typename: 'GenericFile', id: string, alt?: string | null, fileStatus: FileStatus, createdAt: any } | { __typename: 'MediaImage', id: string, alt?: string | null, fileStatus: FileStatus, createdAt: any, image?: { __typename?: 'Image', originalSrc: any } | null } | { __typename?: 'Video', alt?: string | null, fileStatus: FileStatus, createdAt: any }> | null, userErrors: Array<{ __typename?: 'FilesUserError', field?: Array<string> | null, message: string }> } | null };
 
 export type ImageDeleteMutationVariables = Exact<{
   fileIds: Array<Scalars['ID']> | Scalars['ID'];
@@ -36879,6 +36879,13 @@ export type GetImageByIdQueryVariables = Exact<{
 
 
 export type GetImageByIdQuery = { __typename?: 'QueryRoot', node?: { __typename?: 'App' } | { __typename?: 'AppCredit' } | { __typename?: 'AppInstallation' } | { __typename?: 'AppPurchaseOneTime' } | { __typename?: 'AppRevenueAttributionRecord' } | { __typename?: 'AppSubscription' } | { __typename?: 'AppUsageRecord' } | { __typename?: 'BasicEvent' } | { __typename?: 'BulkOperation' } | { __typename?: 'CalculatedOrder' } | { __typename?: 'Channel' } | { __typename?: 'ChannelDefinition' } | { __typename?: 'ChannelInformation' } | { __typename?: 'CheckoutProfile' } | { __typename?: 'Collection' } | { __typename?: 'CommentEvent' } | { __typename?: 'Company' } | { __typename?: 'CompanyAddress' } | { __typename?: 'CompanyContact' } | { __typename?: 'CompanyContactRole' } | { __typename?: 'CompanyContactRoleAssignment' } | { __typename?: 'CompanyLocation' } | { __typename?: 'Customer' } | { __typename?: 'CustomerPaymentMethod' } | { __typename?: 'CustomerVisit' } | { __typename?: 'DeliveryCarrierService' } | { __typename?: 'DeliveryCondition' } | { __typename?: 'DeliveryCountry' } | { __typename?: 'DeliveryLocationGroup' } | { __typename?: 'DeliveryMethod' } | { __typename?: 'DeliveryMethodDefinition' } | { __typename?: 'DeliveryParticipant' } | { __typename?: 'DeliveryProfile' } | { __typename?: 'DeliveryProfileItem' } | { __typename?: 'DeliveryProvince' } | { __typename?: 'DeliveryRateDefinition' } | { __typename?: 'DeliveryZone' } | { __typename?: 'DiscountAutomaticBxgy' } | { __typename?: 'DiscountAutomaticNode' } | { __typename?: 'DiscountCodeNode' } | { __typename?: 'DiscountNode' } | { __typename?: 'DiscountRedeemCodeBulkCreation' } | { __typename?: 'Domain' } | { __typename?: 'DraftOrder' } | { __typename?: 'DraftOrderLineItem' } | { __typename?: 'DraftOrderTag' } | { __typename?: 'Duty' } | { __typename?: 'ExternalVideo' } | { __typename?: 'Fulfillment' } | { __typename?: 'FulfillmentEvent' } | { __typename?: 'FulfillmentLineItem' } | { __typename?: 'FulfillmentOrder' } | { __typename?: 'FulfillmentOrderDestination' } | { __typename?: 'FulfillmentOrderLineItem' } | { __typename?: 'FulfillmentOrderMerchantRequest' } | { __typename?: 'GenericFile' } | { __typename?: 'GiftCard' } | { __typename?: 'InventoryItem' } | { __typename?: 'InventoryLevel' } | { __typename?: 'LineItem' } | { __typename?: 'LineItemMutable' } | { __typename?: 'Location' } | { __typename?: 'MailingAddress' } | { __typename?: 'Market' } | { __typename?: 'MarketRegionCountry' } | { __typename?: 'MarketWebPresence' } | { __typename?: 'MarketingActivity' } | { __typename?: 'MarketingEvent' } | { __typename: 'MediaImage', fileStatus: FileStatus, alt?: string | null, id: string, createdAt: any, image?: { __typename?: 'Image', originalSrc: any } | null } | { __typename?: 'Metafield' } | { __typename?: 'MetafieldDefinition' } | { __typename?: 'MetafieldStorefrontVisibility' } | { __typename?: 'Model3d' } | { __typename?: 'OnlineStoreArticle' } | { __typename?: 'OnlineStoreBlog' } | { __typename?: 'OnlineStorePage' } | { __typename?: 'Order' } | { __typename?: 'OrderDisputeSummary' } | { __typename?: 'OrderTransaction' } | { __typename?: 'PaymentMandate' } | { __typename?: 'PaymentSchedule' } | { __typename?: 'PaymentTerms' } | { __typename?: 'PaymentTermsTemplate' } | { __typename?: 'PriceList' } | { __typename?: 'PriceRule' } | { __typename?: 'PriceRuleDiscountCode' } | { __typename?: 'PrivateMetafield' } | { __typename?: 'Product' } | { __typename?: 'ProductOption' } | { __typename?: 'ProductTaxonomyNode' } | { __typename?: 'ProductVariant' } | { __typename?: 'Publication' } | { __typename?: 'Refund' } | { __typename?: 'SavedSearch' } | { __typename?: 'ScriptTag' } | { __typename?: 'Segment' } | { __typename?: 'SellingPlan' } | { __typename?: 'SellingPlanGroup' } | { __typename?: 'Shop' } | { __typename?: 'ShopPolicy' } | { __typename?: 'ShopifyPaymentsAccount' } | { __typename?: 'ShopifyPaymentsBankAccount' } | { __typename?: 'ShopifyPaymentsDispute' } | { __typename?: 'ShopifyPaymentsDisputeEvidence' } | { __typename?: 'ShopifyPaymentsDisputeFileUpload' } | { __typename?: 'ShopifyPaymentsDisputeFulfillment' } | { __typename?: 'ShopifyPaymentsPayout' } | { __typename?: 'ShopifyPaymentsVerification' } | { __typename?: 'StaffMember' } | { __typename?: 'StandardMetafieldDefinitionTemplate' } | { __typename?: 'StorefrontAccessToken' } | { __typename?: 'SubscriptionBillingAttempt' } | { __typename?: 'SubscriptionContract' } | { __typename?: 'SubscriptionDraft' } | { __typename?: 'TenderTransaction' } | { __typename?: 'TransactionFee' } | { __typename?: 'UrlRedirect' } | { __typename?: 'UrlRedirectImport' } | { __typename?: 'Video' } | { __typename?: 'WebPixel' } | { __typename?: 'WebhookSubscription' } | null };
+
+export type GetFileByIdsQueryVariables = Exact<{
+  fileIds: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type GetFileByIdsQuery = { __typename?: 'QueryRoot', nodes: Array<{ __typename?: 'App' } | { __typename?: 'AppCredit' } | { __typename?: 'AppInstallation' } | { __typename?: 'AppPurchaseOneTime' } | { __typename?: 'AppRevenueAttributionRecord' } | { __typename?: 'AppSubscription' } | { __typename?: 'AppUsageRecord' } | { __typename?: 'BasicEvent' } | { __typename?: 'BulkOperation' } | { __typename?: 'CalculatedOrder' } | { __typename?: 'Channel' } | { __typename?: 'ChannelDefinition' } | { __typename?: 'ChannelInformation' } | { __typename?: 'CheckoutProfile' } | { __typename?: 'Collection' } | { __typename?: 'CommentEvent' } | { __typename?: 'Company' } | { __typename?: 'CompanyAddress' } | { __typename?: 'CompanyContact' } | { __typename?: 'CompanyContactRole' } | { __typename?: 'CompanyContactRoleAssignment' } | { __typename?: 'CompanyLocation' } | { __typename?: 'Customer' } | { __typename?: 'CustomerPaymentMethod' } | { __typename?: 'CustomerVisit' } | { __typename?: 'DeliveryCarrierService' } | { __typename?: 'DeliveryCondition' } | { __typename?: 'DeliveryCountry' } | { __typename?: 'DeliveryLocationGroup' } | { __typename?: 'DeliveryMethod' } | { __typename?: 'DeliveryMethodDefinition' } | { __typename?: 'DeliveryParticipant' } | { __typename?: 'DeliveryProfile' } | { __typename?: 'DeliveryProfileItem' } | { __typename?: 'DeliveryProvince' } | { __typename?: 'DeliveryRateDefinition' } | { __typename?: 'DeliveryZone' } | { __typename?: 'DiscountAutomaticBxgy' } | { __typename?: 'DiscountAutomaticNode' } | { __typename?: 'DiscountCodeNode' } | { __typename?: 'DiscountNode' } | { __typename?: 'DiscountRedeemCodeBulkCreation' } | { __typename?: 'Domain' } | { __typename?: 'DraftOrder' } | { __typename?: 'DraftOrderLineItem' } | { __typename?: 'DraftOrderTag' } | { __typename?: 'Duty' } | { __typename?: 'ExternalVideo' } | { __typename?: 'Fulfillment' } | { __typename?: 'FulfillmentEvent' } | { __typename?: 'FulfillmentLineItem' } | { __typename?: 'FulfillmentOrder' } | { __typename?: 'FulfillmentOrderDestination' } | { __typename?: 'FulfillmentOrderLineItem' } | { __typename?: 'FulfillmentOrderMerchantRequest' } | { __typename: 'GenericFile', fileStatus: FileStatus, alt?: string | null, id: string, url?: any | null, createdAt: any } | { __typename?: 'GiftCard' } | { __typename?: 'InventoryItem' } | { __typename?: 'InventoryLevel' } | { __typename?: 'LineItem' } | { __typename?: 'LineItemMutable' } | { __typename?: 'Location' } | { __typename?: 'MailingAddress' } | { __typename?: 'Market' } | { __typename?: 'MarketRegionCountry' } | { __typename?: 'MarketWebPresence' } | { __typename?: 'MarketingActivity' } | { __typename?: 'MarketingEvent' } | { __typename?: 'MediaImage' } | { __typename?: 'Metafield' } | { __typename?: 'MetafieldDefinition' } | { __typename?: 'MetafieldStorefrontVisibility' } | { __typename?: 'Model3d' } | { __typename?: 'OnlineStoreArticle' } | { __typename?: 'OnlineStoreBlog' } | { __typename?: 'OnlineStorePage' } | { __typename?: 'Order' } | { __typename?: 'OrderDisputeSummary' } | { __typename?: 'OrderTransaction' } | { __typename?: 'PaymentMandate' } | { __typename?: 'PaymentSchedule' } | { __typename?: 'PaymentTerms' } | { __typename?: 'PaymentTermsTemplate' } | { __typename?: 'PriceList' } | { __typename?: 'PriceRule' } | { __typename?: 'PriceRuleDiscountCode' } | { __typename?: 'PrivateMetafield' } | { __typename?: 'Product' } | { __typename?: 'ProductOption' } | { __typename?: 'ProductTaxonomyNode' } | { __typename?: 'ProductVariant' } | { __typename?: 'Publication' } | { __typename?: 'Refund' } | { __typename?: 'SavedSearch' } | { __typename?: 'ScriptTag' } | { __typename?: 'Segment' } | { __typename?: 'SellingPlan' } | { __typename?: 'SellingPlanGroup' } | { __typename?: 'Shop' } | { __typename?: 'ShopPolicy' } | { __typename?: 'ShopifyPaymentsAccount' } | { __typename?: 'ShopifyPaymentsBankAccount' } | { __typename?: 'ShopifyPaymentsDispute' } | { __typename?: 'ShopifyPaymentsDisputeEvidence' } | { __typename?: 'ShopifyPaymentsDisputeFileUpload' } | { __typename?: 'ShopifyPaymentsDisputeFulfillment' } | { __typename?: 'ShopifyPaymentsPayout' } | { __typename?: 'ShopifyPaymentsVerification' } | { __typename?: 'StaffMember' } | { __typename?: 'StandardMetafieldDefinitionTemplate' } | { __typename?: 'StorefrontAccessToken' } | { __typename?: 'SubscriptionBillingAttempt' } | { __typename?: 'SubscriptionContract' } | { __typename?: 'SubscriptionDraft' } | { __typename?: 'TenderTransaction' } | { __typename?: 'TransactionFee' } | { __typename?: 'UrlRedirect' } | { __typename?: 'UrlRedirectImport' } | { __typename?: 'Video' } | { __typename?: 'WebPixel' } | { __typename?: 'WebhookSubscription' } | null> };
 
 export type PopulateProductMutationVariables = Exact<{
   input: ProductInput;
@@ -36941,6 +36948,10 @@ export const ImageCreateDocument = gql`
           originalSrc
         }
       }
+      ... on GenericFile {
+        __typename
+        id
+      }
     }
     userErrors {
       field
@@ -36971,6 +36982,20 @@ export const GetImageByIdDocument = gql`
       image {
         originalSrc
       }
+      createdAt
+    }
+  }
+}
+    `;
+export const GetFileByIdsDocument = gql`
+    query getFileByIds($fileIds: [ID!]!) {
+  nodes(ids: $fileIds) {
+    ... on GenericFile {
+      __typename
+      fileStatus
+      alt
+      id
+      url
       createdAt
     }
   }
@@ -37007,6 +37032,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getImageById(variables: GetImageByIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetImageByIdQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetImageByIdQuery>(GetImageByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getImageById', 'query');
+    },
+    getFileByIds(variables: GetFileByIdsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFileByIdsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetFileByIdsQuery>(GetFileByIdsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getFileByIds', 'query');
     },
     populateProduct(variables: PopulateProductMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PopulateProductMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PopulateProductMutation>(PopulateProductDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'populateProduct', 'mutation');

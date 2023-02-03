@@ -14,7 +14,6 @@ import { AppInstallations } from './app_installations.js';
 
 import generalApiEndpoints from './middleware/general-api.js';
 import mailPrintApiEndpoints from './middleware/mail-print-api.js';
-
 import useMulter, { memoryStorage } from 'multer';
 
 const USE_ONLINE_TOKENS = false;
@@ -108,11 +107,6 @@ export async function createApp(
             }
         }
     });
-    app.get('/api/templates/:template', async (req, res) => {
-        const template = req.params.template;
-        console.log(template);
-        res.download(`assets/${template}.json`);
-    });
 
     // All endpoints after this point will require an active session
     app.use(
@@ -167,13 +161,19 @@ export async function createApp(
         let appInstalled = await AppInstallations.includes(shop);
 
         // this section is my custom installation methods.
+        if (appInstalled && beforeInstallShop.includes(shop)) {
+            // This is the function that is executed only during installation.
+            try {
+                await AppInstallations.init(shop);
+                beforeInstallShop = beforeInstallShop.filter((value) => value !== shop);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.warn(e.message);
+                }
+            }
+        }
         if (!appInstalled) {
             beforeInstallShop.push(shop);
-        }
-        if (beforeInstallShop.includes(shop)) {
-            // This is the function that is executed only during installation.
-            await AppInstallations.init(shop);
-            beforeInstallShop = beforeInstallShop.filter((value) => value !== shop);
         }
 
         if (!appInstalled && !req.originalUrl.match(/^\/exitiframe/i)) {

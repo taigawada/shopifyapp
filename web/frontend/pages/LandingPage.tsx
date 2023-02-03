@@ -1,5 +1,4 @@
 import {
-    Button,
     Card,
     Page,
     Layout,
@@ -9,21 +8,18 @@ import {
     Text,
     Banner,
     Link,
+    List,
 } from '@shopify/polaris';
 import { TitleBar, useAppBridge } from '@shopify/app-bridge-react';
 
 import { useAppQuery } from '../hooks';
-
 import { mailPrintImage } from '../assets';
-
 import { Redirect } from '@shopify/app-bridge/actions';
+import { ReferencesFetch } from '../components';
 
-import { References } from '@prisma/client';
-import { useCallback } from 'react';
-
-interface Settings {
-    data: References;
-    isSufficient: boolean;
+export interface Settings {
+    data: ReferencesFetch;
+    isUrlAlive: boolean;
 }
 
 export default function LandingPage() {
@@ -36,13 +32,16 @@ export default function LandingPage() {
             <TitleBar title="chocolatlumiere" />
             <Layout>
                 <Layout.Section secondary>
-                    <Card title="Tags" sectioned>
-                        <p>Add tags to your order.</p>
+                    <Card title="在庫管理" sectioned>
+                        {[...Array(5).keys()].map((index) => (
+                            <List key={String(index)}>サンプル{index}</List>
+                        ))}
                     </Card>
                 </Layout.Section>
                 <Layout.Section>
                     <Card
                         sectioned
+                        title="封筒印刷"
                         primaryFooterAction={{
                             content: '注文管理',
                             onAction: () =>
@@ -55,11 +54,14 @@ export default function LandingPage() {
                             },
                         ]}
                     >
-                        {!isLoading && !data?.isSufficient ? (
+                        {!isLoading && !data?.isUrlAlive ? (
                             <TextContainer>
-                                <Banner title="印刷設定に不備があります。" status="critical">
+                                <Banner
+                                    title="現在参照されているテンプレートが読み込めませんでした。"
+                                    status="critical"
+                                >
                                     <p>
-                                        設定が完了するまで、封筒の印刷はできません。
+                                        参照先のリンクが切れている可能性があります。設定を更新しない限り、PDFをダウンロードできません。
                                         <Link url="/reference">設定へ</Link>
                                     </p>
                                 </Banner>
@@ -74,17 +76,12 @@ export default function LandingPage() {
                             alignment="center"
                         >
                             <Stack.Item fill>
-                                <Text variant="headingLg" as="h6">
-                                    封筒印刷
+                                <Text variant="bodyMd" as="p">
+                                    注文管理画面から注文を選択し、そのままPDFとしてダウンロードすることができます。
                                 </Text>
-                                <p>
-                                    Your app is ready to explore! It contains everything you need to
-                                    get started including the UI library and components.
-                                </p>
-                                <p>
-                                    Ready to go? Start populating your app with some sample products
-                                    to view and test in your store.{' '}
-                                </p>
+                                <Text variant="bodyMd" as="p">
+                                    また、PDFに埋め込まれるロゴやテキストの編集、PDF印刷に用いるテンプレートの変更が設定できます。
+                                </Text>
                             </Stack.Item>
                             <Stack.Item>
                                 <div style={{ padding: '0 20px' }}>

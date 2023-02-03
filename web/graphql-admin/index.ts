@@ -12,7 +12,10 @@ const ENDPOINT = (shop: string, apiVersion: string) =>
 
 export class Graphql {
     client: Sdk;
-    constructor(session: Session, apiVersion: string = process.env.API_VERSION!) {
+    constructor(
+        session: Session | { shop: string; accessToken: string },
+        apiVersion: string = process.env.API_VERSION!
+    ) {
         let accessToken;
         if (session['accessToken']) {
             accessToken = session['accessToken'];

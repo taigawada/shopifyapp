@@ -8,9 +8,14 @@ export const getLogoBase64 = async (url: string) => {
 };
 
 export const getTemplateJson = async (url: string) => {
-    const response = await fetch(url).catch(() => Promise.reject());
-    if (!response.ok) {
-        return Promise.reject();
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            return Promise.reject();
+        }
+        return await response.json();
+    } catch (e) {
+        console.log(e);
+        Promise.reject(e);
     }
-    return await response.json();
 };

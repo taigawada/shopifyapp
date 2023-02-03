@@ -28,6 +28,10 @@ mutation imageCreate($files: [FileCreateInput!]!) {
                     originalSrc
                 }
             }
+            ... on GenericFile {
+                __typename
+                id
+            }
         }
         userErrors {
             field
@@ -54,6 +58,18 @@ query getImageById($id: ID!) {
             image {
                 originalSrc
             }
+            createdAt
+        }
+    }
+}
+query getFileByIds($fileIds: [ID!]!) {
+    nodes(ids: $fileIds) {
+        ... on GenericFile {
+            __typename
+            fileStatus
+            alt
+            id
+            url
             createdAt
         }
     }

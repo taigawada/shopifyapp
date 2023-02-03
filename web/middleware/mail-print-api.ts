@@ -49,7 +49,7 @@ export default function mailPrintApiEndpoints(app: Express, multer: Multer) {
             res.status(400).send(e);
             return;
         }
-        if (!templates || isEmpty(templates) || !fixed || !logoUrl) {
+        if (!templates || isEmpty(templates) || !fixed || !logoBase64) {
             res.sendStatus(400);
             return;
         }

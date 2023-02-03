@@ -5,8 +5,11 @@ import FormData from 'form-data';
 import fetch from 'node-fetch';
 
 import prisma from '../prisma/index.js';
-
+import fs from 'fs/promises';
+import { join } from 'path';
 import { Session } from '@shopify/shopify-api/dist/auth/session';
+
+import { FileStatus } from '../graphql-admin/index.js';
 
 export const logoUpload = async (session: Session, file: Express.Multer.File) => {
     const client = new Graphql(session).client;
@@ -51,19 +54,35 @@ export const logoUpload = async (session: Session, file: Express.Multer.File) =>
     if (!createFileQueryResult) {
         return Promise.reject('failed to upload file.');
     }
-    let createdFile = createFileQueryResult[0];
-    type FileStatus = 'UPLOADED' | 'READY' | 'PROCESSING' | 'FAILED';
-    let fileStatus: FileStatus = createdFile.fileStatus;
+    interface CreatedFile {
+        __typename: 'MediaImage';
+        id: string;
+        alt?: string | null | undefined;
+        fileStatus: FileStatus;
+        createdAt: any;
+        image?:
+            | {
+                  __typename?: 'Image' | undefined;
+                  originalSrc: any;
+              }
+            | null
+            | undefined;
+    }
+    let createdFile: CreatedFile;
+    if (createFileQueryResult[0] && createFileQueryResult[0].__typename === 'MediaImage') {
+        createdFile = createFileQueryResult[0];
+    } else {
+        return Promise.reject();
+    }
     try {
         while (createdFile.fileStatus !== 'READY') {
             if (createdFile.__typename === 'MediaImage') {
                 const getFileQuery = await client.getImageById({ id: createdFile.id });
                 if (getFileQuery.node?.__typename === 'MediaImage') {
                     createdFile = getFileQuery.node;
-                    fileStatus = getFileQuery.node.fileStatus;
                 }
             }
-            if (fileStatus === 'FAILED') {
+            if (createdFile.fileStatus === 'FAILED') {
                 return Promise.reject('Upload status is failed.');
             }
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -118,7 +137,6 @@ export const deleteFilelog = async (req: Request, res: Response, fileIds: string
             )
         );
     } catch (e) {
-        console.log(e);
         res.sendStatus(400);
         return;
     }
@@ -143,4 +161,106 @@ export const deleteFilelogUndo = async (req: Request, res: Response, fileIds: st
         return;
     }
     res.sendStatus(200);
+};
+
+export const templateUpload = async (shopDomain: string, accessToken: string) => {
+    const client = new Graphql({ shop: shopDomain, accessToken: accessToken }).client;
+    const filenames = ['N4template.json', 'N3template.json', 'LPtemplate.json'];
+    const stagedUploadsQueryResult = await client.stagedUploadsCreate({
+        input: filenames.map((filename) => ({
+            filename: filename,
+            resource: 'FILE' as any,
+            mimeType: 'application/json',
+            httpMethod: 'POST' as any,
+        })),
+    });
+    const targets = stagedUploadsQueryResult.stagedUploadsCreate?.stagedTargets;
+    if (!targets) {
+        return Promise.reject('failed to staged upload');
+    }
+    try {
+        await Promise.all(
+            targets.map(async (target, index) => {
+                const params = target.parameters;
+                const url = target.url;
+                const template = await fs.readFile(
+                    join(process.cwd(), `assets/${filenames[index]}`)
+                );
+                const form = new FormData();
+                params.forEach(({ name, value }) => form.append(name, value));
+                form.append('file', template);
+                const headers = { ...form.getHeaders() };
+                if (url.includes('amazon')) {
+                    headers['Content-Length'] = template.byteLength + 5000;
+                }
+                try {
+                    const response = await fetch(url, {
+                        headers: headers,
+                        method: 'POST',
+                        body: form,
+                    });
+                    if (response.ok) {
+                        Promise.resolve();
+                    } else {
+                        Promise.reject(response.status);
+                    }
+                } catch (e) {
+                    Promise.reject(e);
+                }
+            })
+        );
+    } catch (e) {
+        return Promise.reject(e);
+    }
+    const createdFilesMutation = await client.imageCreate({
+        files: targets.map((target, index) => ({
+            alt: filenames[index],
+            contentType: 'FILE' as any,
+            originalSource: target.resourceUrl,
+        })),
+    });
+    interface CreatedFile {
+        __typename: 'GenericFile';
+        id: string;
+        alt?: string | null | undefined;
+        fileStatus: FileStatus;
+        createdAt: any;
+        url?: string;
+    }
+    let createdFiles: CreatedFile[];
+    if (
+        createdFilesMutation.fileCreate?.files?.every((file): file is CreatedFile => {
+            return file && file.__typename === 'GenericFile';
+        })
+    ) {
+        createdFiles = createdFilesMutation.fileCreate?.files;
+    } else {
+        return Promise.reject('failed to upload file.');
+    }
+
+    try {
+        while (!createdFiles.every((file) => file.fileStatus === 'READY')) {
+            if (
+                createdFiles.every((file): file is CreatedFile => file.__typename === 'GenericFile')
+            ) {
+                const getFilesQuery = await client.getFileByIds({
+                    fileIds: createdFiles.map((file) => file.id),
+                });
+                if (
+                    getFilesQuery.nodes.every(
+                        (file): file is CreatedFile => !!file && file.__typename === 'GenericFile'
+                    )
+                ) {
+                    createdFiles = getFilesQuery.nodes;
+                }
+            }
+            if (createdFiles.some((file) => file.fileStatus === 'FAILED')) {
+                return Promise.reject('Upload status is failed.');
+            }
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+    } catch (e) {
+        return Promise.reject('failed to wait for ready state.');
+    }
+    return createdFiles;
 };

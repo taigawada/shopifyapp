@@ -197,7 +197,8 @@ export const DownloadPDF = ({ orderData }: { orderData: GetOrders }) => {
                 breadcrumbs={breadcrumbs}
                 primaryAction={{
                     content: 'ダウンロード',
-                    disabled: selected === 2,
+                    disabled:
+                        (selected === 2 && !productName.value) || orderData.accepted.length < 1,
                     loading: isDownloading,
                     onAction: handleDownload,
                 }}
@@ -207,7 +208,8 @@ export const DownloadPDF = ({ orderData }: { orderData: GetOrders }) => {
                 <Card
                     primaryFooterAction={{
                         content: 'ダウンロード',
-                        disabled: selected === 2 && !productName.value,
+                        disabled:
+                            (selected === 2 && !productName.value) || orderData.accepted.length < 1,
                         loading: isDownloading,
                         onAction: handleDownload,
                     }}

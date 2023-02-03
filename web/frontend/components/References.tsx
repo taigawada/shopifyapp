@@ -12,7 +12,6 @@ import {
     Banner,
     PageActions,
     Thumbnail,
-    Button,
 } from '@shopify/polaris';
 import { LogoDropZone } from '../components/parts';
 import { CircleChevronRightMinor, ViewMajor, IconsMajor } from '@shopify/polaris-icons';
@@ -29,12 +28,13 @@ import {
     submitFail,
 } from '@shopify/react-form';
 import { Accordion } from '../components/parts/Accordion';
+import defaultLogo from '../../assets/cl_logo.js';
 
 export interface ReferencesFetch {
     logo_caption1: string;
     logo_caption2: string;
     logo_caption3: string;
-    logo_image: [{ url: string }];
+    logo_image: { url: string }[];
     logo_text: string;
     N4template: string;
     N3template: string;
@@ -159,9 +159,11 @@ export const References = ({ data }: { data: ReferencesFetch }) => {
             };
             const logoDataURL = await loadDataURLAwait;
             if (logoDataURL) form.append('logoBase64', logoDataURL);
+        } else if (data.logo_image.length > 0) {
+            form.append('logoUrl', data.logo_image[0].url);
+        } else {
+            form.append('logoBase64', defaultLogo);
         }
-
-        form.append('logoUrl', data.logo_image[0].url);
         const response = await authenticatedFetch('/api/preview', {
             method: 'POST',
             body: form,
@@ -314,15 +316,29 @@ export const References = ({ data }: { data: ReferencesFetch }) => {
 
                 <Accordion open={editTemplate}>
                     <Layout.Section>
-                        <Banner></Banner>
+                        <Banner>
+                            <Text variant="bodyMd" as="p">
+                                {
+                                    '[設定] -> [ファイル]からテンプレートをアップロードし、リンクをコピーして貼り付けます。'
+                                }
+                            </Text>
+                            <Text variant="bodyMd" fontWeight="medium" as="p">
+                                テンプレートを更新するとダウンロードが正常にできなくなる可能性があります。必ずバックアップをとり、元のファイルを削除してしまわないようにしてください。
+                            </Text>
+                        </Banner>
                     </Layout.Section>
                     <Layout.AnnotatedSection
                         id="text-settings"
                         title="テンプレート"
                         description={
-                            <Text variant="bodyMd" as="p">
-                                封筒の印刷に使用するテンプレートを更新します。
-                            </Text>
+                            <>
+                                <Text variant="bodyMd" as="p">
+                                    封筒の印刷に使用するテンプレートを更新します。テンプレートの編集には、以下のサイトを利用します。
+                                </Text>
+                                <Link url="https://pdfme.com/template-design" external>
+                                    https://pdfme.com/template-design
+                                </Link>
+                            </>
                         }
                     >
                         <Card sectioned>

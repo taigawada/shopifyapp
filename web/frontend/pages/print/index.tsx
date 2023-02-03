@@ -10,7 +10,7 @@ import { notFoundImage } from '../../assets';
 
 import type { GetOrdersByIdsQuery } from '../../../graphql-admin/index';
 
-import { DownloadPDF } from '../../components/DownloadPDF';
+import { DownloadPDF } from '../../components';
 
 export interface GetOrders {
     accepted: GetOrdersByIdsQuery['nodes'];

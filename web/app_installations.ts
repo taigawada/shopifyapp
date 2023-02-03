@@ -1,25 +1,37 @@
 import { Shopify } from '@shopify/shopify-api';
+import { templateUpload } from './helpers/file-manage.js';
 import prisma from './prisma/index.js';
 
 export const AppInstallations = {
-    init: async (shop: string) => {
+    init: async (shopDomain: string) => {
+        const shopSessions = await Shopify.Context.SESSION_STORAGE.findSessionsByShop!(shopDomain);
+        if (!shopSessions.length || !shopSessions[0].accessToken) {
+            console.warn('Failed to install.');
+            return;
+        }
         try {
-            await prisma.references.upsert({
+            const current = await prisma.references.findUnique({
                 where: {
-                    shop: shop,
+                    shop: shopDomain,
                 },
-                update: {},
-                create: {
-                    shop: shop,
-                    N4template: process.env.HOST + '/api/template/N4template',
-                    N3template: process.env.HOST + '/api/template/N3template',
-                    LPtemplate: process.env.HOST + '/api/template/LPtemplate',
+            });
+            if (!current) {
+                return;
+            }
+            const templates = await templateUpload(shopDomain, shopSessions[0].accessToken);
+            if (!templates.every((file) => (file.url ? true : false))) {
+                throw Error('failed to upload templates.');
+            }
+            await prisma.references.create({
+                data: {
+                    shop: shopDomain,
+                    N4template: templates[0].url,
+                    N3template: templates[1].url,
+                    LPtemplate: templates[2].url,
                 },
             });
         } catch (e) {
-            if (e instanceof Error) {
-                console.warn(e.message);
-            }
+            throw e;
         }
     },
     includes: async function (shopDomain: string) {
@@ -32,7 +44,6 @@ export const AppInstallations = {
         return false;
     },
     delete: async function (shopDomain: string) {
-        console.log(shopDomain);
         const shopSessions = await Shopify.Context.SESSION_STORAGE.findSessionsByShop!(shopDomain);
         if (shopSessions.length > 0) {
             await Shopify.Context.SESSION_STORAGE.deleteSessions!(

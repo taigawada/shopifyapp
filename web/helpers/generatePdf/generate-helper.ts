@@ -5,6 +5,7 @@ import { getTemplateJson, getLogoBase64 } from './fetch-templates.js';
 import { generatePdf } from './generate-pdf.js';
 import type { EnvelopeType, Records } from '.';
 import PDFMerger from 'pdf-merger-js';
+import defaultLogo from '../../assets/cl_logo';
 
 export const generate = async (
     app: Express,
@@ -24,7 +25,9 @@ export const generate = async (
         if (!url[envelopeType] || !references) return res.sendStatus(400);
         const [template, logo] = await Promise.all([
             getTemplateJson(url[envelopeType]),
-            getLogoBase64(references.logo_image[0].url),
+            references.logo_image.length
+                ? getLogoBase64(references.logo_image[0].url)
+                : defaultLogo,
         ]);
         const { logo_image, ...fixedData } = references;
         const fixed = {
@@ -56,16 +59,18 @@ export const preview = async (
     res: Response,
     templates: Templates,
     fixed: LogoTextData,
-    logoBase64: string | undefined,
-    logoUrl: string
+    logoBase64: string,
+    logoUrl?: string
 ) => {
+    console.log(templates);
     let logo: string;
-    if (logoBase64) logo = logoBase64;
-    else {
+    if (logoUrl) {
         logo = await getLogoBase64(logoUrl).catch((e) => {
             res.status(400).send(e);
             return '';
         });
+    } else {
+        logo = logoBase64;
     }
     const sampleData = [
         {

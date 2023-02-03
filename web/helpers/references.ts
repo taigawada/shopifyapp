@@ -1,5 +1,6 @@
 import { Shopify } from '@shopify/shopify-api';
 import type { Express, Request, Response } from 'express';
+import fetch from 'node-fetch';
 import prisma from '../prisma/index.js';
 import { logoUpload } from './file-manage.js';
 import { EnvelopeType, Templates } from './generatePdf/index.js';
@@ -37,13 +38,25 @@ export const getReference = async (app: Express, req: Request, res: Response) =>
         },
     });
     if (!references) {
-        await prisma.references.create({
-            data: {
-                shop: session.shop,
-            },
-        });
+        return res.sendStatus(400);
     }
-    res.status(200).send(references);
+    const { N4template, N3template, LPtemplate, ...rest } = references;
+    let urlAlive = true;
+    try {
+        await Promise.all(
+            [N4template, N3template, LPtemplate].map(async (templateUrl) => {
+                try {
+                    const response = await fetch(templateUrl);
+                    if (!response.ok) throw Error('invalid response.');
+                } catch (e) {
+                    Promise.reject(e);
+                }
+            })
+        );
+    } catch (e) {
+        urlAlive = false;
+    }
+    res.status(200).send({ data: references, isUrlAlive: urlAlive });
 };
 
 export interface PutData extends Templates {
