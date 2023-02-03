@@ -31,6 +31,7 @@ export const AppInstallations = {
                 },
             });
         } catch (e) {
+            console.log(e);
             throw e;
         }
     },

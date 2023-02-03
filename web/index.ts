@@ -163,6 +163,7 @@ export async function createApp(
         // this section is my custom installation methods.
         if (appInstalled && beforeInstallShop.includes(shop)) {
             // This is the function that is executed only during installation.
+            console.log('initialized');
             try {
                 await AppInstallations.init(shop);
                 beforeInstallShop = beforeInstallShop.filter((value) => value !== shop);
