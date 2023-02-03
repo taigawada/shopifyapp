@@ -1,27 +1,43 @@
 import { promises as fs } from 'fs';
-import { generate } from '@pdfme/generator';
+import module from 'module';
+const require = module.createRequire(import.meta.url);
+import type { GenerateProps } from '@pdfme/generator';
+import { provinceCode } from './convert-province-code';
+
+interface PdfMe {
+    generate: (preps: GenerateProps) => Promise<Uint8Array>;
+}
+
+const { generate }: PdfMe = require('@pdfme/generator');
+
 import { createCanvas, registerFont } from 'canvas';
 
 export type Records = {
-    orderNumber: string;
-    shippingName: string;
-    shippingAddress1: string;
-    shippingAddress2: string;
-    shippingCity: string;
-    shippingZip: string;
-    shippingProvince: string;
+    id: string;
+    __typename: string;
+    name: string;
+    createdAt: string;
+    shippingAddress: {
+        zip: string;
+        provinceCode: string;
+        city: string;
+        address1: string;
+        address2: string;
+        firstName: string;
+        lastName: string;
+    };
 }[];
 
-interface FixedData {
+export interface FixedData {
     logo: string;
-    logoText: string;
-    logoCaption1: string;
-    logoCaption2: string;
-    logoCaption3: string;
+    logo_text: string;
+    logo_caption1: string;
+    logo_caption2: string;
+    logo_caption3: string;
 }
 
 const zipcodeToImage = async (zipcode: string, fontSizeRatio: number) => {
-    registerFont('./Fonts/OCRB.ttf', { family: 'OCRB' });
+    registerFont('helpers/generatePdf/Fonts/OCRB.ttf', { family: 'OCRB' });
     const size = {
         width: 20 * 10,
         height: 55 * 10,
@@ -49,8 +65,8 @@ export const generatePdf = async (
     fontSizeRatio: number = 1
 ) => {
     const fontfile = await fs
-        .readFile('./Fonts/GenShinGothic-Light.ttf')
-        .catch(() => Promise.reject());
+        .readFile('helpers/generatePdf/Fonts/GenShinGothic-Light.ttf')
+        .catch((e) => Promise.reject(e));
     const font = {
         'GenShinGothic-Light': {
             data: fontfile,
@@ -58,21 +74,26 @@ export const generatePdf = async (
         },
     };
     const inputDatas = records.map(async (inputData) => ({
-        orderNumber: inputData.orderNumber,
-        zipcode: `〒${inputData.shippingZip.slice(0, 3)}-${inputData.shippingZip.slice(3)}`,
-        zipcodeImage: await zipcodeToImage(inputData.shippingZip, fontSizeRatio),
-        address1: `${inputData.shippingProvince} ${inputData.shippingCity} ${inputData.shippingAddress1}`,
-        address2: inputData.shippingAddress2,
-        name: `${inputData.shippingName} 様`,
+        orderNumber: inputData.name,
+        zipcode: `〒${inputData.shippingAddress.zip}`,
+        zipcodeImage: await zipcodeToImage(
+            inputData.shippingAddress.zip.replace('-', ''),
+            fontSizeRatio
+        ),
+        address1: `${provinceCode(inputData.shippingAddress.provinceCode)} ${
+            inputData.shippingAddress.city
+        } ${inputData.shippingAddress.address1}`,
+        address2: inputData.shippingAddress.address2,
+        name: `${inputData.shippingAddress.lastName} ${inputData.shippingAddress.firstName} 様`,
         logo: fixedData.logo,
-        logoText: fixedData.logoText,
-        logoCaption1: fixedData.logoCaption1,
-        logoCaption2: fixedData.logoCaption2,
-        logoCaption3: fixedData.logoCaption3,
+        logoText: fixedData.logo_text,
+        logoCaption1: fixedData.logo_caption1,
+        logoCaption2: fixedData.logo_caption2,
+        logoCaption3: fixedData.logo_caption3,
     }));
-    const inputs = await Promise.all(inputDatas).catch(() => Promise.reject());
-    const pdf = await generate({ template, inputs, options: { font: font } }).catch(() =>
-        Promise.reject()
+    const inputs = await Promise.all(inputDatas).catch((e) => Promise.reject(e));
+    const pdf = await generate({ template, inputs, options: { font: font } }).catch((e) =>
+        Promise.reject(e)
     );
-    return pdf;
+    return Buffer.from(pdf);
 };

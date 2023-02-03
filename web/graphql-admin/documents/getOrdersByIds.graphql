@@ -4,6 +4,16 @@ query getOrdersByIds($input: [ID!]!) {
         ... on Order {
             __typename
             name
+            createdAt
+            shippingAddress {
+                zip
+                provinceCode
+                city
+                address1
+                address2
+                firstName
+                lastName
+            }
         }
     }
 }

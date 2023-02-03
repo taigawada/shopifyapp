@@ -10,7 +10,7 @@ export const Accordion = ({
     children,
 }: {
     open: boolean;
-    arrowPadding: number;
+    arrowPadding?: number;
     onAnimationEnded?: () => void;
     children: ReactNode;
 }) => {
@@ -19,20 +19,21 @@ export const Accordion = ({
 
     useEffect(() => {
         if (childElement.current) {
-            const height = childElement.current?.clientHeight + arrowPadding + 1;
+            const height =
+                childElement.current?.clientHeight + (arrowPadding ? arrowPadding : 0) + 1;
             setChildHeight(height);
         }
     }, [open]);
 
     const springStyle = useSpring({
-        height: open ? `${childHeight}px` : '0px',
-        opacity: open ? 1 : 0,
+        height: open ? `${childHeight + 20}px` : '0px',
         onRest: onAnimationEnded,
     });
 
     return (
         <animated.div
             css={css({
+                width: '100%',
                 margin: 'var(--p-space-5) 0',
                 overflow: 'hidden',
             })}

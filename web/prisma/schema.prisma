@@ -7,32 +7,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model ShopUser {
-  id                 String  @id @default(cuid())
-  shop               String  @unique
-  general_settings   GeneralSettings?
-}
-
-model GeneralSettings {
-  shop                String   @unique
-  user                ShopUser @relation(fields: [shop], references: [shop])
-  nagagata4_template  String   @db.VarChar(255) @default("")
-  nagagata3_template  String   @db.VarChar(255) @default("")
-  letterpack_template String   @db.VarChar(255) @default("")
-  logo_image          String   @db.VarChar(255) @default("")
-  logo_text           String   @db.VarChar(255) @default("")
-  logo_caption1       String   @db.Text @default("")
-  logo_caption2       String   @db.Text @default("")
-  logo_caption3       String   @db.Text @default("")
-}
-
 model shopify_sessions {
   id               String  @id @db.VarChar(255)
-  shop             String  @db.VarChar(255)
+  shop             String  @unique @db.VarChar(255)
   state            String  @db.VarChar(255)
   isonline         Boolean
   scope            String? @db.VarChar(255)
   expires          Int?
   onlineaccessinfo String? @db.VarChar(255)
   accesstoken      String? @db.VarChar(255)
+}
+
+model References {
+  shop          String          @unique
+  N4template    String          @default("")
+  N3template    String          @default("")
+  LPtemplate    String          @default("")
+  logo_image    LogoImageLogs[]
+  logo_text     String          @default("") @db.VarChar(255)
+  logo_caption1 String          @default("")
+  logo_caption2 String          @default("")
+  logo_caption3 String          @default("")
+}
+
+model LogoImageLogs {
+  id            Int      @id() @default(autoincrement())
+  shop          String
+  graphql_id    String   @unique
+  url           String   @unique
+  alt           String
+  uploaded_at   DateTime
+  is_deleted    Boolean @default(false)
+
+  references References @relation(fields: [shop], references: [shop])
 }

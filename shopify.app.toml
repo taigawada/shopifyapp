@@ -1,4 +1,4 @@
 # This file stores configurations for your Shopify app.
 
 name = "chocolatlumiere"
-scopes = "write_products,read_orders, write_files, read_files"
+scopes = "write_products, write_orders, read_orders, write_files, read_files"

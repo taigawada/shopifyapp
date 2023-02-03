@@ -1,112 +1,146 @@
 import { Shopify } from '@shopify/shopify-api';
-import type { Express } from 'express';
+import type { Express, Request, Response } from 'express';
 import { Graphql } from '../graphql-admin';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 
-import type { ReadStream } from 'fs';
+import prisma from '../prisma';
 
-interface FileInfo {
-    filename: string;
-    type: string;
-    size: string;
-}
+import { Session } from '@shopify/shopify-api/dist/auth/session';
 
-export const fileUpload = async (
-    app: Express,
-    req: any,
-    res: any,
-    file: ReadStream,
-    info: FileInfo
-) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'));
-    if (!session) {
-        res.status(400);
-        return;
-    }
+export const logoUpload = async (session: Session, file: Express.Multer.File) => {
     const client = new Graphql(session).client;
-    const resourceName = info.type !== 'application/json' ? 'IMAGE' : 'FILE';
     const stagedUploadsQueryResult = await client.stagedUploadsCreate({
         input: {
-            filename: info.filename,
-            resource: resourceName as any,
-            mimeType: info.type,
+            filename: file.originalname,
+            resource: 'IMAGE' as any,
+            mimeType: file.mimetype,
             httpMethod: 'POST' as any,
         },
     });
-
     const target = stagedUploadsQueryResult.stagedUploadsCreate?.stagedTargets;
     if (!target) {
-        return res.status(400);
+        return Promise.reject('failed to staged upload');
     }
-
     const params = target[0].parameters;
     const url = target[0].url;
     const resourceUrl = target[0].resourceUrl;
 
     const form = new FormData();
-    params.forEach(({ name, value }) => {
-        form.append(name, value);
-    });
-    form.append('file', file);
-    const headers = {
-        ...form.getHeaders(),
-    };
+    params.forEach(({ name, value }) => form.append(name, value));
+    form.append('file', file.buffer);
+    const headers = { ...form.getHeaders() };
     if (url.includes('amazon')) {
-        headers['Content-Length'] = parseInt(info.size) + 5000;
+        headers['Content-Length'] = file.size + 5000;
     }
-    const uploadResult = await Promise.all([
+    const [_, createdImage] = await Promise.all([
         fetch(url, {
             headers: headers,
             method: 'POST',
             body: form,
         }),
-        client.fileCreate({
+        client.imageCreate({
             files: {
-                alt: info.filename,
-                contentType: resourceName as any,
+                alt: file.originalname,
+                contentType: 'IMAGE' as any,
                 originalSource: resourceUrl,
             },
         }),
-    ]);
-    const createFileQueryResult = uploadResult[1].fileCreate?.files;
+    ]).catch((e) => Promise.reject(e));
+    const createFileQueryResult = createdImage.fileCreate?.files;
     if (!createFileQueryResult) {
-        return res.status(400);
+        return Promise.reject('failed to upload file.');
     }
-    const createdFile = createFileQueryResult[0];
-    console.log(createdFile);
-    if (createdFile.__typename === 'GenericFile' || createdFile.__typename === 'MediaImage') {
-        const getFileQuery = await client.getFileUrl({ id: createdFile.id });
-        console.log(getFileQuery);
-        let fileUrl: string | null = null;
-        if (getFileQuery.node?.__typename === 'GenericFile') {
-            fileUrl = getFileQuery.node.url;
-        } else if (getFileQuery.node?.__typename === 'MediaImage') {
-            fileUrl = getFileQuery.node.image?.originalSrc;
+    let createdFile = createFileQueryResult[0];
+    type FileStatus = 'UPLOADED' | 'READY' | 'PROCESSING' | 'FAILED';
+    let fileStatus: FileStatus = createdFile.fileStatus;
+    try {
+        while (createdFile.fileStatus !== 'READY') {
+            if (createdFile.__typename === 'MediaImage') {
+                const getFileQuery = await client.getImageById({ id: createdFile.id });
+                if (getFileQuery.node?.__typename === 'MediaImage') {
+                    createdFile = getFileQuery.node;
+                    fileStatus = getFileQuery.node.fileStatus;
+                }
+            }
+            if (fileStatus === 'FAILED') {
+                return Promise.reject('Upload status is failed.');
+            }
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         }
-        console.log(fileUrl);
-        const result = {
-            id: createdFile.id,
-            url: fileUrl,
-            filename: createdFile.alt,
-        };
-        return res.status(200).send(result);
+    } catch (e) {
+        return Promise.reject('failed to wait for ready state.');
     }
-    res.status(400);
+    if (createdFile.__typename === 'MediaImage') {
+        return createdFile;
+    } else {
+        return Promise.reject('upload failed');
+    }
 };
 
-export const fileDelete = async (app: Express, req: any, res: any, fileId: string) => {
-    // 'gid://shopify/MediaImage/32573113434422'
+export const getFilelog = async (app: Express, req: Request, res: Response) => {
     const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'));
-    if (!session) {
-        res.status(400);
+    if (!session) return res.status(401);
+    try {
+        const result = await prisma.logoImageLogs.findMany({
+            where: {
+                AND: [
+                    {
+                        shop: session.shop,
+                    },
+                    {
+                        is_deleted: false,
+                    },
+                ],
+            },
+            orderBy: {
+                uploaded_at: 'desc',
+            },
+        });
+        res.status(200).send(result);
+    } catch (e) {
+        res.status(400).send(e);
+    }
+};
+
+export const deleteFilelog = async (req: Request, res: Response, fileIds: string[]) => {
+    try {
+        await prisma.$transaction(
+            fileIds.map((graphqlId) =>
+                prisma.logoImageLogs.update({
+                    where: {
+                        graphql_id: graphqlId,
+                    },
+                    data: {
+                        is_deleted: true,
+                    },
+                })
+            )
+        );
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(400);
         return;
     }
-    const client = new Graphql(session).client;
-    const result = await client.getFileUrl({ id: 'gid://shopify/GenericFile/32575343100214' });
-    console.log(result);
-    // client.fileDelete({
-    //     fileIds: ['gid://shopify/MediaImage/32573113434422'],
-    // });
-    res.status(200);
+    res.sendStatus(200);
+};
+export const deleteFilelogUndo = async (req: Request, res: Response, fileIds: string[]) => {
+    try {
+        await prisma.$transaction(
+            fileIds.map((graphqlId) =>
+                prisma.logoImageLogs.update({
+                    where: {
+                        graphql_id: graphqlId,
+                    },
+                    data: {
+                        is_deleted: false,
+                    },
+                })
+            )
+        );
+    } catch {
+        res.sendStatus(400);
+        return;
+    }
+    res.sendStatus(200);
 };

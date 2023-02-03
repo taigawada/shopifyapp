@@ -15,16 +15,12 @@ mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
     }
 }
 
-mutation fileCreate($files: [FileCreateInput!]!) {
+mutation imageCreate($files: [FileCreateInput!]!) {
     fileCreate(files: $files) {
         files {
             alt
             fileStatus
-            ... on GenericFile {
-                __typename
-                id
-                url
-            }
+            createdAt
             ... on MediaImage {
                 __typename
                 id
@@ -39,7 +35,7 @@ mutation fileCreate($files: [FileCreateInput!]!) {
         }
     }
 }
-mutation fileDelete($fileIds: [ID!]!) {
+mutation imageDelete($fileIds: [ID!]!) {
     fileDelete(fileIds: $fileIds) {
         deletedFileIds
         userErrors {
@@ -48,20 +44,17 @@ mutation fileDelete($fileIds: [ID!]!) {
         }
     }
 }
-query getFileUrl($id: ID!) {
+query getImageById($id: ID!) {
     node(id: $id) {
-        ... on GenericFile {
-            __typename
-            fileStatus
-            id
-            url
-        }
         ... on MediaImage {
             __typename
+            fileStatus
+            alt
             id
             image {
                 originalSrc
             }
+            createdAt
         }
     }
 }

@@ -1,17 +1,16 @@
-export const getLogoBybase64 = async (url: string) => {
-    const response = await fetch(url).catch(() => Promise.reject());
-    if (!response.ok) {
-        return Promise.reject();
-    }
-    const blob = await response.blob().catch(() => Promise.reject());
-    const blobText = await blob.text().catch(() => Promise.reject());
-    return `data:${blob.type};base64,${Buffer.from(blobText).toString('base64')}`;
+import fetch from 'node-fetch';
+
+export const getLogoBase64 = async (url: string) => {
+    const response = await fetch(url).catch((e) => Promise.reject(e));
+    if (!response.ok) return Promise.reject();
+    const buffer = await response.buffer().catch((e) => Promise.reject(e));
+    return `data:image/png;base64,${buffer.toString('base64')}`;
 };
 
-export const getTemplateByJson = async (url: string) => {
+export const getTemplateJson = async (url: string) => {
     const response = await fetch(url).catch(() => Promise.reject());
     if (!response.ok) {
         return Promise.reject();
     }
-    return response.json();
+    return await response.json();
 };

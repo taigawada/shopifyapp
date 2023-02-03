@@ -2,7 +2,6 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import formData from 'express-form-data';
 import { Shopify, LATEST_API_VERSION } from '@shopify/shopify-api';
 
 import applyAuthMiddleware from './middleware/auth.js';
@@ -15,12 +14,9 @@ import { BillingInterval } from './helpers/ensure-billing.js';
 import { AppInstallations } from './app_installations.js';
 
 import generalApiEndpoints from './middleware/general-api';
-import fileApiEndpoints from './middleware/file-api';
 import mailPrintApiEndpoints from './middleware/mail-print-api';
 
-// import expressWs from 'express-ws';
-// import { websocket } from './helpers/websocket';
-import { WebSocketServer } from 'ws';
+import useMulter, { memoryStorage } from 'multer';
 
 const USE_ONLINE_TOKENS = false;
 
@@ -31,10 +27,6 @@ const DEV_INDEX_PATH = `${process.cwd()}/frontend/`;
 const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`;
 
 const DB_PATH = `${process.cwd()}/database.sqlite`;
-
-// const url = `https://rasp-home.com/api/orders?ids=123&ids=5240175722806&ids=5240165957942`;
-// const parameters = new URLSearchParams(url);
-// console.log(parameters.getAll('ids'));
 
 Shopify.Context.initialize({
     API_KEY: process.env.SHOPIFY_API_KEY!,
@@ -95,8 +87,6 @@ export async function createApp(
 
     app.set('use-online-tokens', USE_ONLINE_TOKENS);
     app.use(cookieParser(Shopify.Context.API_SECRET_KEY));
-    app.use(formData.parse());
-    app.use(formData.stream());
 
     applyAuthMiddleware(app, {
         billing: billingSettings,
@@ -127,13 +117,9 @@ export async function createApp(
             billing: billingSettings,
         })
     );
-
-    generalApiEndpoints(app);
-    mailPrintApiEndpoints(app);
-    fileApiEndpoints(app);
-
-    // const websocketApp = expressWs(app).app;
-    // websocket(websocketApp);
+    const multer = useMulter({ storage: memoryStorage() });
+    generalApiEndpoints(app, multer);
+    mailPrintApiEndpoints(app, multer);
 
     app.get('/api/products/count', async (req, res) => {
         const session = await Shopify.Utils.loadCurrentSession(
@@ -208,9 +194,6 @@ export async function createApp(
         let appInstalled = await AppInstallations.includes(shop);
 
         if (!appInstalled && !req.originalUrl.match(/^\/exitiframe/i)) {
-            // if (shop) {
-            //     AppInstallations.instllationInit(shop);
-            // }
             return redirectToAuth(req, res, app);
         }
 
@@ -231,11 +214,5 @@ export async function createApp(
 createApp().then((app) => {
     const server = app.listen(PORT, () => {
         console.log(`Listening on ${PORT}`);
-    });
-    const wss = new WebSocketServer({ server, path: '/ws' });
-    wss.on('connection', (ws) => {
-        console.log('Client connected');
-        ws.on('close', () => console.log('Client disconnected'));
-        ws.send('something');
     });
 });

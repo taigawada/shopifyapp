@@ -1206,7 +1206,7 @@ export type AppRecurringPricingInput = {
   discount?: InputMaybe<AppSubscriptionDiscountInput>;
   /** How often the app subscription generates a charge. */
   interval?: InputMaybe<AppPricingInterval>;
-  /** The amount to be charged to the store every billing interval. The only permitted currency code is USD. */
+  /** The amount to be charged to the store every billing interval. */
   price: MoneyInput;
 };
 
@@ -1664,7 +1664,7 @@ export type AppUsageRecord = Node & {
   description: Scalars['String'];
   /** A globally-unique identifier. */
   id: Scalars['ID'];
-  /** The price of the usage record. The only permitted currency code is USD. */
+  /** The price of the usage record. */
   price: MoneyV2;
   /** Defines the usage pricing plan the merchant is subscribed to. */
   subscriptionLineItem: AppSubscriptionLineItem;
@@ -6858,17 +6858,17 @@ export type CustomerPhoneNumber = {
 /** The valid tiers for the predicted spend of a customer with a shop. */
 export enum CustomerPredictedSpendTier {
   /**
-   * The customer's spend is higher than the 70th percentile of the shop's customer sales.
+   * The customer's spending is predicted to be in the top spending range for the shop in the following year.
    *
    */
   High = 'HIGH',
   /**
-   * The customer's spend is lower than the 10th percentile of the shop's customer sales, including customers who didn't repurchase.
+   * The customer's spending is predicted to be zero, or in the lowest spending range for the shop in the following year.
    *
    */
   Low = 'LOW',
   /**
-   * The customer's spend is between the 10th and 70th percentile of the shop's customer sales.
+   * The customer's spending is predicted to be in the normal spending range for the shop in the following year.
    *
    */
   Medium = 'MEDIUM'
@@ -23403,7 +23403,12 @@ export enum PriceListUserErrorCode {
   Taken = 'TAKEN'
 }
 
-/** Price rules are a set of conditions, including entitlements and prerequisites, that must be met in order for a discount code to apply. We recommend using the [Discount types](https://shopify.dev/api/examples/discounts) available in the GraphQL Admin API, which are intended to replace the GraphQL `PriceRule` object and REST Admin `PriceRule` and `DiscountCode` resources. */
+/**
+ * Price rules are a set of conditions, including entitlements and prerequisites, that must be met in order for a discount code to apply.
+ *
+ * We recommend using the types and queries detailed at [Manage existing discounts](https://shopify.dev/apps/discounts/existing) instead. These will replace the GraphQL `PriceRule` object and REST Admin `PriceRule` and `DiscountCode` resources.
+ *
+ */
 export type PriceRule = CommentEventSubject & HasEvents & LegacyInteroperability & Node & {
   __typename?: 'PriceRule';
   /** The maximum number of times that the price rule can be allocated onto an order. */
@@ -23492,7 +23497,12 @@ export type PriceRule = CommentEventSubject & HasEvents & LegacyInteroperability
 };
 
 
-/** Price rules are a set of conditions, including entitlements and prerequisites, that must be met in order for a discount code to apply. We recommend using the [Discount types](https://shopify.dev/api/examples/discounts) available in the GraphQL Admin API, which are intended to replace the GraphQL `PriceRule` object and REST Admin `PriceRule` and `DiscountCode` resources. */
+/**
+ * Price rules are a set of conditions, including entitlements and prerequisites, that must be met in order for a discount code to apply.
+ *
+ * We recommend using the types and queries detailed at [Manage existing discounts](https://shopify.dev/apps/discounts/existing) instead. These will replace the GraphQL `PriceRule` object and REST Admin `PriceRule` and `DiscountCode` resources.
+ *
+ */
 export type PriceRuleDiscountCodesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -23505,7 +23515,12 @@ export type PriceRuleDiscountCodesArgs = {
 };
 
 
-/** Price rules are a set of conditions, including entitlements and prerequisites, that must be met in order for a discount code to apply. We recommend using the [Discount types](https://shopify.dev/api/examples/discounts) available in the GraphQL Admin API, which are intended to replace the GraphQL `PriceRule` object and REST Admin `PriceRule` and `DiscountCode` resources. */
+/**
+ * Price rules are a set of conditions, including entitlements and prerequisites, that must be met in order for a discount code to apply.
+ *
+ * We recommend using the types and queries detailed at [Manage existing discounts](https://shopify.dev/apps/discounts/existing) instead. These will replace the GraphQL `PriceRule` object and REST Admin `PriceRule` and `DiscountCode` resources.
+ *
+ */
 export type PriceRuleEventsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -26755,7 +26770,7 @@ export type QueryRoot = {
   currentBulkOperation?: Maybe<BulkOperation>;
   /** Returns a Customer resource by ID. */
   customer?: Maybe<Customer>;
-  /** Returns a CustomerPaymentMethod resource by ID. */
+  /** Returns a CustomerPaymentMethod resource by its ID. */
   customerPaymentMethod?: Maybe<CustomerPaymentMethod>;
   /** The list of members, such as customers, that's associated with an individual segment. */
   customerSegmentMembers: CustomerSegmentMemberConnection;
@@ -26908,11 +26923,25 @@ export type QueryRoot = {
   priceList?: Maybe<PriceList>;
   /** All price lists for a shop. */
   priceLists: PriceListConnection;
-  /** Returns a price rule resource by ID. */
+  /**
+   * Returns a code price rule resource by ID.
+   *
+   * We recommend using the [`codeDiscountNode` query](https://shopify.dev/api/admin-graphql/latest/queries/codeDiscountNode) instead, which will replace this query in the future.
+   *
+   * More information can be found on the [Manage existing discounts](https://shopify.dev/apps/discounts/existing) page.
+   *
+   */
   priceRule?: Maybe<PriceRule>;
   /** List of the shop's price rule saved searches. */
   priceRuleSavedSearches: SavedSearchConnection;
-  /** Returns a list of price rule resources. */
+  /**
+   * Returns a list of code price rule resources that have at least one associated discount code.
+   *
+   * We recommend using the [`codeDiscountNodes` query](https://shopify.dev/api/admin-graphql/latest/queries/codeDiscountNodes) instead, which will replace this query in the future.
+   *
+   * More information can be found on the [Manage existing discounts](https://shopify.dev/apps/discounts/existing) page.
+   *
+   */
   priceRules: PriceRuleConnection;
   /** The primary market of the shop. */
   primaryMarket: Market;
@@ -30663,7 +30692,7 @@ export type SellingPlanRecurringDeliveryPolicy = {
   anchors: Array<SellingPlanAnchor>;
   /** The date and time when the selling plan delivery policy was created. */
   createdAt: Scalars['DateTime'];
-  /** A buffer period for orders to be included in a cycle. */
+  /** Number of days which represent a buffer period for orders to be included in a cycle. */
   cutoff?: Maybe<Scalars['Int']>;
   /**
    * Whether the delivery policy is merchant or buyer-centric.
@@ -36821,7 +36850,7 @@ export type GetOrdersByIdsQueryVariables = Exact<{
 }>;
 
 
-export type GetOrdersByIdsQuery = { __typename?: 'QueryRoot', nodes: Array<{ __typename?: 'App', id: string } | { __typename?: 'AppCredit', id: string } | { __typename?: 'AppInstallation', id: string } | { __typename?: 'AppPurchaseOneTime', id: string } | { __typename?: 'AppRevenueAttributionRecord', id: string } | { __typename?: 'AppSubscription', id: string } | { __typename?: 'AppUsageRecord', id: string } | { __typename?: 'BasicEvent', id: string } | { __typename?: 'BulkOperation', id: string } | { __typename?: 'CalculatedOrder', id: string } | { __typename?: 'Channel', id: string } | { __typename?: 'ChannelDefinition', id: string } | { __typename?: 'ChannelInformation', id: string } | { __typename?: 'CheckoutProfile', id: string } | { __typename?: 'Collection', id: string } | { __typename?: 'CommentEvent', id: string } | { __typename?: 'Company', id: string } | { __typename?: 'CompanyAddress', id: string } | { __typename?: 'CompanyContact', id: string } | { __typename?: 'CompanyContactRole', id: string } | { __typename?: 'CompanyContactRoleAssignment', id: string } | { __typename?: 'CompanyLocation', id: string } | { __typename?: 'Customer', id: string } | { __typename?: 'CustomerPaymentMethod', id: string } | { __typename?: 'CustomerVisit', id: string } | { __typename?: 'DeliveryCarrierService', id: string } | { __typename?: 'DeliveryCondition', id: string } | { __typename?: 'DeliveryCountry', id: string } | { __typename?: 'DeliveryLocationGroup', id: string } | { __typename?: 'DeliveryMethod', id: string } | { __typename?: 'DeliveryMethodDefinition', id: string } | { __typename?: 'DeliveryParticipant', id: string } | { __typename?: 'DeliveryProfile', id: string } | { __typename?: 'DeliveryProfileItem', id: string } | { __typename?: 'DeliveryProvince', id: string } | { __typename?: 'DeliveryRateDefinition', id: string } | { __typename?: 'DeliveryZone', id: string } | { __typename?: 'DiscountAutomaticBxgy', id: string } | { __typename?: 'DiscountAutomaticNode', id: string } | { __typename?: 'DiscountCodeNode', id: string } | { __typename?: 'DiscountNode', id: string } | { __typename?: 'DiscountRedeemCodeBulkCreation', id: string } | { __typename?: 'Domain', id: string } | { __typename?: 'DraftOrder', id: string } | { __typename?: 'DraftOrderLineItem', id: string } | { __typename?: 'DraftOrderTag', id: string } | { __typename?: 'Duty', id: string } | { __typename?: 'ExternalVideo', id: string } | { __typename?: 'Fulfillment', id: string } | { __typename?: 'FulfillmentEvent', id: string } | { __typename?: 'FulfillmentLineItem', id: string } | { __typename?: 'FulfillmentOrder', id: string } | { __typename?: 'FulfillmentOrderDestination', id: string } | { __typename?: 'FulfillmentOrderLineItem', id: string } | { __typename?: 'FulfillmentOrderMerchantRequest', id: string } | { __typename?: 'GenericFile', id: string } | { __typename?: 'GiftCard', id: string } | { __typename?: 'InventoryItem', id: string } | { __typename?: 'InventoryLevel', id: string } | { __typename?: 'LineItem', id: string } | { __typename?: 'LineItemMutable', id: string } | { __typename?: 'Location', id: string } | { __typename?: 'MailingAddress', id: string } | { __typename?: 'Market', id: string } | { __typename?: 'MarketRegionCountry', id: string } | { __typename?: 'MarketWebPresence', id: string } | { __typename?: 'MarketingActivity', id: string } | { __typename?: 'MarketingEvent', id: string } | { __typename?: 'MediaImage', id: string } | { __typename?: 'Metafield', id: string } | { __typename?: 'MetafieldDefinition', id: string } | { __typename?: 'MetafieldStorefrontVisibility', id: string } | { __typename?: 'Model3d', id: string } | { __typename?: 'OnlineStoreArticle', id: string } | { __typename?: 'OnlineStoreBlog', id: string } | { __typename?: 'OnlineStorePage', id: string } | { __typename: 'Order', name: string, id: string } | { __typename?: 'OrderDisputeSummary', id: string } | { __typename?: 'OrderTransaction', id: string } | { __typename?: 'PaymentMandate', id: string } | { __typename?: 'PaymentSchedule', id: string } | { __typename?: 'PaymentTerms', id: string } | { __typename?: 'PaymentTermsTemplate', id: string } | { __typename?: 'PriceList', id: string } | { __typename?: 'PriceRule', id: string } | { __typename?: 'PriceRuleDiscountCode', id: string } | { __typename?: 'PrivateMetafield', id: string } | { __typename?: 'Product', id: string } | { __typename?: 'ProductOption', id: string } | { __typename?: 'ProductTaxonomyNode', id: string } | { __typename?: 'ProductVariant', id: string } | { __typename?: 'Publication', id: string } | { __typename?: 'Refund', id: string } | { __typename?: 'SavedSearch', id: string } | { __typename?: 'ScriptTag', id: string } | { __typename?: 'Segment', id: string } | { __typename?: 'SellingPlan', id: string } | { __typename?: 'SellingPlanGroup', id: string } | { __typename?: 'Shop', id: string } | { __typename?: 'ShopPolicy', id: string } | { __typename?: 'ShopifyPaymentsAccount', id: string } | { __typename?: 'ShopifyPaymentsBankAccount', id: string } | { __typename?: 'ShopifyPaymentsDispute', id: string } | { __typename?: 'ShopifyPaymentsDisputeEvidence', id: string } | { __typename?: 'ShopifyPaymentsDisputeFileUpload', id: string } | { __typename?: 'ShopifyPaymentsDisputeFulfillment', id: string } | { __typename?: 'ShopifyPaymentsPayout', id: string } | { __typename?: 'ShopifyPaymentsVerification', id: string } | { __typename?: 'StaffMember', id: string } | { __typename?: 'StandardMetafieldDefinitionTemplate', id: string } | { __typename?: 'StorefrontAccessToken', id: string } | { __typename?: 'SubscriptionBillingAttempt', id: string } | { __typename?: 'SubscriptionContract', id: string } | { __typename?: 'SubscriptionDraft', id: string } | { __typename?: 'TenderTransaction', id: string } | { __typename?: 'TransactionFee', id: string } | { __typename?: 'UrlRedirect', id: string } | { __typename?: 'UrlRedirectImport', id: string } | { __typename?: 'Video', id: string } | { __typename?: 'WebPixel', id: string } | { __typename?: 'WebhookSubscription', id: string } | null> };
+export type GetOrdersByIdsQuery = { __typename?: 'QueryRoot', nodes: Array<{ __typename?: 'App', id: string } | { __typename?: 'AppCredit', id: string } | { __typename?: 'AppInstallation', id: string } | { __typename?: 'AppPurchaseOneTime', id: string } | { __typename?: 'AppRevenueAttributionRecord', id: string } | { __typename?: 'AppSubscription', id: string } | { __typename?: 'AppUsageRecord', id: string } | { __typename?: 'BasicEvent', id: string } | { __typename?: 'BulkOperation', id: string } | { __typename?: 'CalculatedOrder', id: string } | { __typename?: 'Channel', id: string } | { __typename?: 'ChannelDefinition', id: string } | { __typename?: 'ChannelInformation', id: string } | { __typename?: 'CheckoutProfile', id: string } | { __typename?: 'Collection', id: string } | { __typename?: 'CommentEvent', id: string } | { __typename?: 'Company', id: string } | { __typename?: 'CompanyAddress', id: string } | { __typename?: 'CompanyContact', id: string } | { __typename?: 'CompanyContactRole', id: string } | { __typename?: 'CompanyContactRoleAssignment', id: string } | { __typename?: 'CompanyLocation', id: string } | { __typename?: 'Customer', id: string } | { __typename?: 'CustomerPaymentMethod', id: string } | { __typename?: 'CustomerVisit', id: string } | { __typename?: 'DeliveryCarrierService', id: string } | { __typename?: 'DeliveryCondition', id: string } | { __typename?: 'DeliveryCountry', id: string } | { __typename?: 'DeliveryLocationGroup', id: string } | { __typename?: 'DeliveryMethod', id: string } | { __typename?: 'DeliveryMethodDefinition', id: string } | { __typename?: 'DeliveryParticipant', id: string } | { __typename?: 'DeliveryProfile', id: string } | { __typename?: 'DeliveryProfileItem', id: string } | { __typename?: 'DeliveryProvince', id: string } | { __typename?: 'DeliveryRateDefinition', id: string } | { __typename?: 'DeliveryZone', id: string } | { __typename?: 'DiscountAutomaticBxgy', id: string } | { __typename?: 'DiscountAutomaticNode', id: string } | { __typename?: 'DiscountCodeNode', id: string } | { __typename?: 'DiscountNode', id: string } | { __typename?: 'DiscountRedeemCodeBulkCreation', id: string } | { __typename?: 'Domain', id: string } | { __typename?: 'DraftOrder', id: string } | { __typename?: 'DraftOrderLineItem', id: string } | { __typename?: 'DraftOrderTag', id: string } | { __typename?: 'Duty', id: string } | { __typename?: 'ExternalVideo', id: string } | { __typename?: 'Fulfillment', id: string } | { __typename?: 'FulfillmentEvent', id: string } | { __typename?: 'FulfillmentLineItem', id: string } | { __typename?: 'FulfillmentOrder', id: string } | { __typename?: 'FulfillmentOrderDestination', id: string } | { __typename?: 'FulfillmentOrderLineItem', id: string } | { __typename?: 'FulfillmentOrderMerchantRequest', id: string } | { __typename?: 'GenericFile', id: string } | { __typename?: 'GiftCard', id: string } | { __typename?: 'InventoryItem', id: string } | { __typename?: 'InventoryLevel', id: string } | { __typename?: 'LineItem', id: string } | { __typename?: 'LineItemMutable', id: string } | { __typename?: 'Location', id: string } | { __typename?: 'MailingAddress', id: string } | { __typename?: 'Market', id: string } | { __typename?: 'MarketRegionCountry', id: string } | { __typename?: 'MarketWebPresence', id: string } | { __typename?: 'MarketingActivity', id: string } | { __typename?: 'MarketingEvent', id: string } | { __typename?: 'MediaImage', id: string } | { __typename?: 'Metafield', id: string } | { __typename?: 'MetafieldDefinition', id: string } | { __typename?: 'MetafieldStorefrontVisibility', id: string } | { __typename?: 'Model3d', id: string } | { __typename?: 'OnlineStoreArticle', id: string } | { __typename?: 'OnlineStoreBlog', id: string } | { __typename?: 'OnlineStorePage', id: string } | { __typename: 'Order', name: string, createdAt: any, id: string, shippingAddress?: { __typename?: 'MailingAddress', zip?: string | null, provinceCode?: string | null, city?: string | null, address1?: string | null, address2?: string | null, firstName?: string | null, lastName?: string | null } | null } | { __typename?: 'OrderDisputeSummary', id: string } | { __typename?: 'OrderTransaction', id: string } | { __typename?: 'PaymentMandate', id: string } | { __typename?: 'PaymentSchedule', id: string } | { __typename?: 'PaymentTerms', id: string } | { __typename?: 'PaymentTermsTemplate', id: string } | { __typename?: 'PriceList', id: string } | { __typename?: 'PriceRule', id: string } | { __typename?: 'PriceRuleDiscountCode', id: string } | { __typename?: 'PrivateMetafield', id: string } | { __typename?: 'Product', id: string } | { __typename?: 'ProductOption', id: string } | { __typename?: 'ProductTaxonomyNode', id: string } | { __typename?: 'ProductVariant', id: string } | { __typename?: 'Publication', id: string } | { __typename?: 'Refund', id: string } | { __typename?: 'SavedSearch', id: string } | { __typename?: 'ScriptTag', id: string } | { __typename?: 'Segment', id: string } | { __typename?: 'SellingPlan', id: string } | { __typename?: 'SellingPlanGroup', id: string } | { __typename?: 'Shop', id: string } | { __typename?: 'ShopPolicy', id: string } | { __typename?: 'ShopifyPaymentsAccount', id: string } | { __typename?: 'ShopifyPaymentsBankAccount', id: string } | { __typename?: 'ShopifyPaymentsDispute', id: string } | { __typename?: 'ShopifyPaymentsDisputeEvidence', id: string } | { __typename?: 'ShopifyPaymentsDisputeFileUpload', id: string } | { __typename?: 'ShopifyPaymentsDisputeFulfillment', id: string } | { __typename?: 'ShopifyPaymentsPayout', id: string } | { __typename?: 'ShopifyPaymentsVerification', id: string } | { __typename?: 'StaffMember', id: string } | { __typename?: 'StandardMetafieldDefinitionTemplate', id: string } | { __typename?: 'StorefrontAccessToken', id: string } | { __typename?: 'SubscriptionBillingAttempt', id: string } | { __typename?: 'SubscriptionContract', id: string } | { __typename?: 'SubscriptionDraft', id: string } | { __typename?: 'TenderTransaction', id: string } | { __typename?: 'TransactionFee', id: string } | { __typename?: 'UrlRedirect', id: string } | { __typename?: 'UrlRedirectImport', id: string } | { __typename?: 'Video', id: string } | { __typename?: 'WebPixel', id: string } | { __typename?: 'WebhookSubscription', id: string } | null> };
 
 export type StagedUploadsCreateMutationVariables = Exact<{
   input: Array<StagedUploadInput> | StagedUploadInput;
@@ -36830,26 +36859,26 @@ export type StagedUploadsCreateMutationVariables = Exact<{
 
 export type StagedUploadsCreateMutation = { __typename?: 'Mutation', stagedUploadsCreate?: { __typename?: 'StagedUploadsCreatePayload', stagedTargets?: Array<{ __typename?: 'StagedMediaUploadTarget', resourceUrl?: any | null, url?: any | null, parameters: Array<{ __typename?: 'StagedUploadParameter', name: string, value: string }> }> | null, userErrors: Array<{ __typename?: 'UserError', field?: Array<string> | null, message: string }> } | null };
 
-export type FileCreateMutationVariables = Exact<{
+export type ImageCreateMutationVariables = Exact<{
   files: Array<FileCreateInput> | FileCreateInput;
 }>;
 
 
-export type FileCreateMutation = { __typename?: 'Mutation', fileCreate?: { __typename?: 'FileCreatePayload', files?: Array<{ __typename: 'GenericFile', id: string, url?: any | null, alt?: string | null, fileStatus: FileStatus } | { __typename: 'MediaImage', id: string, alt?: string | null, fileStatus: FileStatus, image?: { __typename?: 'Image', originalSrc: any } | null } | { __typename?: 'Video', alt?: string | null, fileStatus: FileStatus }> | null, userErrors: Array<{ __typename?: 'FilesUserError', field?: Array<string> | null, message: string }> } | null };
+export type ImageCreateMutation = { __typename?: 'Mutation', fileCreate?: { __typename?: 'FileCreatePayload', files?: Array<{ __typename?: 'GenericFile', alt?: string | null, fileStatus: FileStatus, createdAt: any } | { __typename: 'MediaImage', id: string, alt?: string | null, fileStatus: FileStatus, createdAt: any, image?: { __typename?: 'Image', originalSrc: any } | null } | { __typename?: 'Video', alt?: string | null, fileStatus: FileStatus, createdAt: any }> | null, userErrors: Array<{ __typename?: 'FilesUserError', field?: Array<string> | null, message: string }> } | null };
 
-export type FileDeleteMutationVariables = Exact<{
+export type ImageDeleteMutationVariables = Exact<{
   fileIds: Array<Scalars['ID']> | Scalars['ID'];
 }>;
 
 
-export type FileDeleteMutation = { __typename?: 'Mutation', fileDelete?: { __typename?: 'FileDeletePayload', deletedFileIds?: Array<string> | null, userErrors: Array<{ __typename?: 'FilesUserError', field?: Array<string> | null, message: string }> } | null };
+export type ImageDeleteMutation = { __typename?: 'Mutation', fileDelete?: { __typename?: 'FileDeletePayload', deletedFileIds?: Array<string> | null, userErrors: Array<{ __typename?: 'FilesUserError', field?: Array<string> | null, message: string }> } | null };
 
-export type GetFileUrlQueryVariables = Exact<{
+export type GetImageByIdQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetFileUrlQuery = { __typename?: 'QueryRoot', node?: { __typename?: 'App' } | { __typename?: 'AppCredit' } | { __typename?: 'AppInstallation' } | { __typename?: 'AppPurchaseOneTime' } | { __typename?: 'AppRevenueAttributionRecord' } | { __typename?: 'AppSubscription' } | { __typename?: 'AppUsageRecord' } | { __typename?: 'BasicEvent' } | { __typename?: 'BulkOperation' } | { __typename?: 'CalculatedOrder' } | { __typename?: 'Channel' } | { __typename?: 'ChannelDefinition' } | { __typename?: 'ChannelInformation' } | { __typename?: 'CheckoutProfile' } | { __typename?: 'Collection' } | { __typename?: 'CommentEvent' } | { __typename?: 'Company' } | { __typename?: 'CompanyAddress' } | { __typename?: 'CompanyContact' } | { __typename?: 'CompanyContactRole' } | { __typename?: 'CompanyContactRoleAssignment' } | { __typename?: 'CompanyLocation' } | { __typename?: 'Customer' } | { __typename?: 'CustomerPaymentMethod' } | { __typename?: 'CustomerVisit' } | { __typename?: 'DeliveryCarrierService' } | { __typename?: 'DeliveryCondition' } | { __typename?: 'DeliveryCountry' } | { __typename?: 'DeliveryLocationGroup' } | { __typename?: 'DeliveryMethod' } | { __typename?: 'DeliveryMethodDefinition' } | { __typename?: 'DeliveryParticipant' } | { __typename?: 'DeliveryProfile' } | { __typename?: 'DeliveryProfileItem' } | { __typename?: 'DeliveryProvince' } | { __typename?: 'DeliveryRateDefinition' } | { __typename?: 'DeliveryZone' } | { __typename?: 'DiscountAutomaticBxgy' } | { __typename?: 'DiscountAutomaticNode' } | { __typename?: 'DiscountCodeNode' } | { __typename?: 'DiscountNode' } | { __typename?: 'DiscountRedeemCodeBulkCreation' } | { __typename?: 'Domain' } | { __typename?: 'DraftOrder' } | { __typename?: 'DraftOrderLineItem' } | { __typename?: 'DraftOrderTag' } | { __typename?: 'Duty' } | { __typename?: 'ExternalVideo' } | { __typename?: 'Fulfillment' } | { __typename?: 'FulfillmentEvent' } | { __typename?: 'FulfillmentLineItem' } | { __typename?: 'FulfillmentOrder' } | { __typename?: 'FulfillmentOrderDestination' } | { __typename?: 'FulfillmentOrderLineItem' } | { __typename?: 'FulfillmentOrderMerchantRequest' } | { __typename: 'GenericFile', fileStatus: FileStatus, id: string, url?: any | null } | { __typename?: 'GiftCard' } | { __typename?: 'InventoryItem' } | { __typename?: 'InventoryLevel' } | { __typename?: 'LineItem' } | { __typename?: 'LineItemMutable' } | { __typename?: 'Location' } | { __typename?: 'MailingAddress' } | { __typename?: 'Market' } | { __typename?: 'MarketRegionCountry' } | { __typename?: 'MarketWebPresence' } | { __typename?: 'MarketingActivity' } | { __typename?: 'MarketingEvent' } | { __typename: 'MediaImage', id: string, image?: { __typename?: 'Image', originalSrc: any } | null } | { __typename?: 'Metafield' } | { __typename?: 'MetafieldDefinition' } | { __typename?: 'MetafieldStorefrontVisibility' } | { __typename?: 'Model3d' } | { __typename?: 'OnlineStoreArticle' } | { __typename?: 'OnlineStoreBlog' } | { __typename?: 'OnlineStorePage' } | { __typename?: 'Order' } | { __typename?: 'OrderDisputeSummary' } | { __typename?: 'OrderTransaction' } | { __typename?: 'PaymentMandate' } | { __typename?: 'PaymentSchedule' } | { __typename?: 'PaymentTerms' } | { __typename?: 'PaymentTermsTemplate' } | { __typename?: 'PriceList' } | { __typename?: 'PriceRule' } | { __typename?: 'PriceRuleDiscountCode' } | { __typename?: 'PrivateMetafield' } | { __typename?: 'Product' } | { __typename?: 'ProductOption' } | { __typename?: 'ProductTaxonomyNode' } | { __typename?: 'ProductVariant' } | { __typename?: 'Publication' } | { __typename?: 'Refund' } | { __typename?: 'SavedSearch' } | { __typename?: 'ScriptTag' } | { __typename?: 'Segment' } | { __typename?: 'SellingPlan' } | { __typename?: 'SellingPlanGroup' } | { __typename?: 'Shop' } | { __typename?: 'ShopPolicy' } | { __typename?: 'ShopifyPaymentsAccount' } | { __typename?: 'ShopifyPaymentsBankAccount' } | { __typename?: 'ShopifyPaymentsDispute' } | { __typename?: 'ShopifyPaymentsDisputeEvidence' } | { __typename?: 'ShopifyPaymentsDisputeFileUpload' } | { __typename?: 'ShopifyPaymentsDisputeFulfillment' } | { __typename?: 'ShopifyPaymentsPayout' } | { __typename?: 'ShopifyPaymentsVerification' } | { __typename?: 'StaffMember' } | { __typename?: 'StandardMetafieldDefinitionTemplate' } | { __typename?: 'StorefrontAccessToken' } | { __typename?: 'SubscriptionBillingAttempt' } | { __typename?: 'SubscriptionContract' } | { __typename?: 'SubscriptionDraft' } | { __typename?: 'TenderTransaction' } | { __typename?: 'TransactionFee' } | { __typename?: 'UrlRedirect' } | { __typename?: 'UrlRedirectImport' } | { __typename?: 'Video' } | { __typename?: 'WebPixel' } | { __typename?: 'WebhookSubscription' } | null };
+export type GetImageByIdQuery = { __typename?: 'QueryRoot', node?: { __typename?: 'App' } | { __typename?: 'AppCredit' } | { __typename?: 'AppInstallation' } | { __typename?: 'AppPurchaseOneTime' } | { __typename?: 'AppRevenueAttributionRecord' } | { __typename?: 'AppSubscription' } | { __typename?: 'AppUsageRecord' } | { __typename?: 'BasicEvent' } | { __typename?: 'BulkOperation' } | { __typename?: 'CalculatedOrder' } | { __typename?: 'Channel' } | { __typename?: 'ChannelDefinition' } | { __typename?: 'ChannelInformation' } | { __typename?: 'CheckoutProfile' } | { __typename?: 'Collection' } | { __typename?: 'CommentEvent' } | { __typename?: 'Company' } | { __typename?: 'CompanyAddress' } | { __typename?: 'CompanyContact' } | { __typename?: 'CompanyContactRole' } | { __typename?: 'CompanyContactRoleAssignment' } | { __typename?: 'CompanyLocation' } | { __typename?: 'Customer' } | { __typename?: 'CustomerPaymentMethod' } | { __typename?: 'CustomerVisit' } | { __typename?: 'DeliveryCarrierService' } | { __typename?: 'DeliveryCondition' } | { __typename?: 'DeliveryCountry' } | { __typename?: 'DeliveryLocationGroup' } | { __typename?: 'DeliveryMethod' } | { __typename?: 'DeliveryMethodDefinition' } | { __typename?: 'DeliveryParticipant' } | { __typename?: 'DeliveryProfile' } | { __typename?: 'DeliveryProfileItem' } | { __typename?: 'DeliveryProvince' } | { __typename?: 'DeliveryRateDefinition' } | { __typename?: 'DeliveryZone' } | { __typename?: 'DiscountAutomaticBxgy' } | { __typename?: 'DiscountAutomaticNode' } | { __typename?: 'DiscountCodeNode' } | { __typename?: 'DiscountNode' } | { __typename?: 'DiscountRedeemCodeBulkCreation' } | { __typename?: 'Domain' } | { __typename?: 'DraftOrder' } | { __typename?: 'DraftOrderLineItem' } | { __typename?: 'DraftOrderTag' } | { __typename?: 'Duty' } | { __typename?: 'ExternalVideo' } | { __typename?: 'Fulfillment' } | { __typename?: 'FulfillmentEvent' } | { __typename?: 'FulfillmentLineItem' } | { __typename?: 'FulfillmentOrder' } | { __typename?: 'FulfillmentOrderDestination' } | { __typename?: 'FulfillmentOrderLineItem' } | { __typename?: 'FulfillmentOrderMerchantRequest' } | { __typename?: 'GenericFile' } | { __typename?: 'GiftCard' } | { __typename?: 'InventoryItem' } | { __typename?: 'InventoryLevel' } | { __typename?: 'LineItem' } | { __typename?: 'LineItemMutable' } | { __typename?: 'Location' } | { __typename?: 'MailingAddress' } | { __typename?: 'Market' } | { __typename?: 'MarketRegionCountry' } | { __typename?: 'MarketWebPresence' } | { __typename?: 'MarketingActivity' } | { __typename?: 'MarketingEvent' } | { __typename: 'MediaImage', fileStatus: FileStatus, alt?: string | null, id: string, createdAt: any, image?: { __typename?: 'Image', originalSrc: any } | null } | { __typename?: 'Metafield' } | { __typename?: 'MetafieldDefinition' } | { __typename?: 'MetafieldStorefrontVisibility' } | { __typename?: 'Model3d' } | { __typename?: 'OnlineStoreArticle' } | { __typename?: 'OnlineStoreBlog' } | { __typename?: 'OnlineStorePage' } | { __typename?: 'Order' } | { __typename?: 'OrderDisputeSummary' } | { __typename?: 'OrderTransaction' } | { __typename?: 'PaymentMandate' } | { __typename?: 'PaymentSchedule' } | { __typename?: 'PaymentTerms' } | { __typename?: 'PaymentTermsTemplate' } | { __typename?: 'PriceList' } | { __typename?: 'PriceRule' } | { __typename?: 'PriceRuleDiscountCode' } | { __typename?: 'PrivateMetafield' } | { __typename?: 'Product' } | { __typename?: 'ProductOption' } | { __typename?: 'ProductTaxonomyNode' } | { __typename?: 'ProductVariant' } | { __typename?: 'Publication' } | { __typename?: 'Refund' } | { __typename?: 'SavedSearch' } | { __typename?: 'ScriptTag' } | { __typename?: 'Segment' } | { __typename?: 'SellingPlan' } | { __typename?: 'SellingPlanGroup' } | { __typename?: 'Shop' } | { __typename?: 'ShopPolicy' } | { __typename?: 'ShopifyPaymentsAccount' } | { __typename?: 'ShopifyPaymentsBankAccount' } | { __typename?: 'ShopifyPaymentsDispute' } | { __typename?: 'ShopifyPaymentsDisputeEvidence' } | { __typename?: 'ShopifyPaymentsDisputeFileUpload' } | { __typename?: 'ShopifyPaymentsDisputeFulfillment' } | { __typename?: 'ShopifyPaymentsPayout' } | { __typename?: 'ShopifyPaymentsVerification' } | { __typename?: 'StaffMember' } | { __typename?: 'StandardMetafieldDefinitionTemplate' } | { __typename?: 'StorefrontAccessToken' } | { __typename?: 'SubscriptionBillingAttempt' } | { __typename?: 'SubscriptionContract' } | { __typename?: 'SubscriptionDraft' } | { __typename?: 'TenderTransaction' } | { __typename?: 'TransactionFee' } | { __typename?: 'UrlRedirect' } | { __typename?: 'UrlRedirectImport' } | { __typename?: 'Video' } | { __typename?: 'WebPixel' } | { __typename?: 'WebhookSubscription' } | null };
 
 export type PopulateProductMutationVariables = Exact<{
   input: ProductInput;
@@ -36866,6 +36895,16 @@ export const GetOrdersByIdsDocument = gql`
     ... on Order {
       __typename
       name
+      createdAt
+      shippingAddress {
+        zip
+        provinceCode
+        city
+        address1
+        address2
+        firstName
+        lastName
+      }
     }
   }
 }
@@ -36888,17 +36927,13 @@ export const StagedUploadsCreateDocument = gql`
   }
 }
     `;
-export const FileCreateDocument = gql`
-    mutation fileCreate($files: [FileCreateInput!]!) {
+export const ImageCreateDocument = gql`
+    mutation imageCreate($files: [FileCreateInput!]!) {
   fileCreate(files: $files) {
     files {
       alt
       fileStatus
-      ... on GenericFile {
-        __typename
-        id
-        url
-      }
+      createdAt
       ... on MediaImage {
         __typename
         id
@@ -36914,8 +36949,8 @@ export const FileCreateDocument = gql`
   }
 }
     `;
-export const FileDeleteDocument = gql`
-    mutation fileDelete($fileIds: [ID!]!) {
+export const ImageDeleteDocument = gql`
+    mutation imageDelete($fileIds: [ID!]!) {
   fileDelete(fileIds: $fileIds) {
     deletedFileIds
     userErrors {
@@ -36925,21 +36960,18 @@ export const FileDeleteDocument = gql`
   }
 }
     `;
-export const GetFileUrlDocument = gql`
-    query getFileUrl($id: ID!) {
+export const GetImageByIdDocument = gql`
+    query getImageById($id: ID!) {
   node(id: $id) {
-    ... on GenericFile {
-      __typename
-      fileStatus
-      id
-      url
-    }
     ... on MediaImage {
       __typename
+      fileStatus
+      alt
       id
       image {
         originalSrc
       }
+      createdAt
     }
   }
 }
@@ -36967,14 +36999,14 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     stagedUploadsCreate(variables: StagedUploadsCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<StagedUploadsCreateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<StagedUploadsCreateMutation>(StagedUploadsCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'stagedUploadsCreate', 'mutation');
     },
-    fileCreate(variables: FileCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FileCreateMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<FileCreateMutation>(FileCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'fileCreate', 'mutation');
+    imageCreate(variables: ImageCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ImageCreateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ImageCreateMutation>(ImageCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'imageCreate', 'mutation');
     },
-    fileDelete(variables: FileDeleteMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<FileDeleteMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<FileDeleteMutation>(FileDeleteDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'fileDelete', 'mutation');
+    imageDelete(variables: ImageDeleteMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ImageDeleteMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ImageDeleteMutation>(ImageDeleteDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'imageDelete', 'mutation');
     },
-    getFileUrl(variables: GetFileUrlQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFileUrlQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetFileUrlQuery>(GetFileUrlDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getFileUrl', 'query');
+    getImageById(variables: GetImageByIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetImageByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetImageByIdQuery>(GetImageByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getImageById', 'query');
     },
     populateProduct(variables: PopulateProductMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PopulateProductMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PopulateProductMutation>(PopulateProductDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'populateProduct', 'mutation');

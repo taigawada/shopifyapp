@@ -65,7 +65,7 @@ export default defineConfig({
         proxy: {
             '^/(\\?.*)?$': proxyOptions,
             '^/api(/|(\\?.*)?$)': proxyOptions,
-            '/ws': {
+            '^/ws/.*': {
                 target: `ws://localhost:${PORT}`,
                 ws: true,
             },

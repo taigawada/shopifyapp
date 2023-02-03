@@ -22,20 +22,4 @@ export const AppInstallations = {
             );
         }
     },
-
-    // this is chocolatlumiere app original methods
-    instllationInit: async (shopDomain: string) => {
-        const isShopExist = await prisma.shopUser.findMany({
-            where: {
-                shop: shopDomain,
-            },
-        });
-        if (!isShopExist) {
-            await prisma.shopUser.create({
-                data: {
-                    shop: shopDomain,
-                },
-            });
-        }
-    },
 };
