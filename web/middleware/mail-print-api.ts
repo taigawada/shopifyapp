@@ -2,7 +2,13 @@ import type { Express } from 'express';
 import { isEmpty } from 'lodash-es';
 import type { Multer } from 'multer';
 import { fetchOrders } from '../helpers/fetch-orders.js';
-import { preview, generate, LogoTextData, Records, Templates } from '../helpers/generatePdf';
+import {
+    preview,
+    generate,
+    LogoTextData,
+    Records,
+    Templates,
+} from '../helpers/generatePdf/index.js';
 import { toQueryArray } from '../helpers/utilities.js';
 
 export default function mailPrintApiEndpoints(app: Express, multer: Multer) {

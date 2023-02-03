@@ -1,5 +1,4 @@
 import { Shopify } from '@shopify/shopify-api';
-import prisma from './prisma';
 
 export const AppInstallations = {
     includes: async function (shopDomain: string) {

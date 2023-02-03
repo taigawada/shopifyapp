@@ -1,6 +1,6 @@
 import { Shopify } from '@shopify/shopify-api';
 import type { Express } from 'express';
-import { Graphql } from '../graphql-admin';
+import { Graphql } from '../graphql-admin/index.js';
 import { forEach, pullAllBy } from 'lodash-es';
 
 export const fetchOrders = async (app: Express, req: any, res: any, ids: string[]) => {

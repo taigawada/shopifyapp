@@ -1,10 +1,10 @@
 import { Shopify } from '@shopify/shopify-api';
 import type { Express, Request, Response } from 'express';
-import { Graphql } from '../graphql-admin';
+import { Graphql } from '../graphql-admin/index.js';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 
-import prisma from '../prisma';
+import prisma from '../prisma/index.js';
 
 import { Session } from '@shopify/shopify-api/dist/auth/session';
 

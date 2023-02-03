@@ -1,8 +1,8 @@
 import { Shopify } from '@shopify/shopify-api';
 import type { Express, Request, Response } from 'express';
-import prisma from '../prisma';
+import prisma from '../prisma/index.js';
 import { logoUpload } from './file-manage.js';
-import { EnvelopeType, Templates } from './generatePdf';
+import { EnvelopeType, Templates } from './generatePdf/index.js';
 
 export const getReference = async (app: Express, req: Request, res: Response) => {
     const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'));

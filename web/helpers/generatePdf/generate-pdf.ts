@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import module from 'module';
 const require = module.createRequire(import.meta.url);
 import type { GenerateProps } from '@pdfme/generator';
-import { provinceCode } from './convert-province-code';
+import { provinceCode } from './convert-province-code.js';
 
 interface PdfMe {
     generate: (preps: GenerateProps) => Promise<Uint8Array>;

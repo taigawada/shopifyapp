@@ -1,5 +1,5 @@
 import { Shopify } from '@shopify/shopify-api';
-import { Graphql } from '../graphql-admin';
+import { Graphql } from '../graphql-admin/index.js';
 
 const ADJECTIVES = [
     'autumn',
