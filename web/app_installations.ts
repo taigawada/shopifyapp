@@ -15,7 +15,7 @@ export const AppInstallations = {
                     shop: shopDomain,
                 },
             });
-            if (!current) {
+            if (current) {
                 return;
             }
             const templates = await templateUpload(shopDomain, shopSessions[0].accessToken);
@@ -31,7 +31,6 @@ export const AppInstallations = {
                 },
             });
         } catch (e) {
-            console.log(e);
             throw e;
         }
     },
