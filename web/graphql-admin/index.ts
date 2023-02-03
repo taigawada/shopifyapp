@@ -1,8 +1,8 @@
-export * from './generated/sdk';
+export * from './generated/sdk.js';
 
 import type { Session } from '@shopify/shopify-api/dist/auth/session';
 import { GraphQLClient } from 'graphql-request';
-import { getSdk, Sdk } from './generated/sdk';
+import { getSdk, Sdk } from './generated/sdk.js';
 
 import * as dotenv from 'dotenv';
 dotenv.config();

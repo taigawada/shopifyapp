@@ -7,14 +7,14 @@ import { Shopify, LATEST_API_VERSION } from '@shopify/shopify-api';
 import applyAuthMiddleware from './middleware/auth.js';
 import verifyRequest from './middleware/verify-request.js';
 import { setupGDPRWebHooks } from './gdpr.js';
-import productCreator from './helpers/product-creator';
+import productCreator from './helpers/product-creator.js';
 import redirectToAuth from './helpers/redirect-to-auth.js';
 import { BillingInterval } from './helpers/ensure-billing.js';
 
 import { AppInstallations } from './app_installations.js';
 
-import generalApiEndpoints from './middleware/general-api';
-import mailPrintApiEndpoints from './middleware/mail-print-api';
+import generalApiEndpoints from './middleware/general-api.js';
+import mailPrintApiEndpoints from './middleware/mail-print-api.js';
 
 import useMulter, { memoryStorage } from 'multer';
 

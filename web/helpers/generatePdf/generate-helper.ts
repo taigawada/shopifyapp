@@ -1,9 +1,9 @@
 import type { Express, Request, Response } from 'express';
 import { Shopify } from '@shopify/shopify-api';
-import { getFixed, getTemplate } from '../references';
-import { getTemplateJson, getLogoBase64 } from './fetch-templates';
-import { generatePdf, Records } from './generate-pdf';
-import { EnvelopeType } from '.';
+import { getFixed, getTemplate } from '../references.js';
+import { getTemplateJson, getLogoBase64 } from './fetch-templates.js';
+import { generatePdf } from './generate-pdf.js';
+import type { EnvelopeType, Records } from '.';
 import PDFMerger from 'pdf-merger-js';
 
 export const generate = async (

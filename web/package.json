@@ -6,7 +6,7 @@
         "debug": "node --inspect-brk index.ts",
         "dev": "cross-env NODE_ENV=development nodemon -L --ignore ./frontend & graphql-codegen-esm --config codegen.yml --watch admin-graphql/documents/*.graphql",
         "preserve": "tsc",
-        "serve": "cross-env NODE_ENV=production node dist/index.js",
+        "serve": "cross-env NODE_ENV=production node --es-module-specifier-resolution=node dist/index.js",
         "studio": "npx prisma studio",
         "codegen": "ts-node codegen.ts && graphql-codegen-esm --config codegen.yml"
     },

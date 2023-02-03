@@ -1,8 +1,7 @@
 import { Shopify } from '@shopify/shopify-api';
 import type { Express, Request, Response } from 'express';
-import type { References } from '@prisma/client';
 import prisma from '../prisma';
-import { logoUpload } from './file-manage';
+import { logoUpload } from './file-manage.js';
 import { EnvelopeType, Templates } from './generatePdf';
 
 export const getReference = async (app: Express, req: Request, res: Response) => {

@@ -1,9 +1,9 @@
 import type { Express } from 'express';
 import type { Multer } from 'multer';
-import { getReference, putReference, PutData } from '../helpers/references';
+import { getReference, putReference, PutData } from '../helpers/references.js';
 import { Templates } from '../helpers/generatePdf';
-import { deleteFilelog, deleteFilelogUndo, getFilelog } from '../helpers/file-manage';
-import { toQueryArray } from '../helpers/utilities';
+import { deleteFilelog, deleteFilelogUndo, getFilelog } from '../helpers/file-manage.js';
+import { toQueryArray } from '../helpers/utilities.js';
 export default function generalApiEndpoints(app: Express, multer: Multer) {
     app.get('/api/reference', async (req, res) => {
         getReference(app, req, res);
