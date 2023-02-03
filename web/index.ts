@@ -160,10 +160,7 @@ export async function createApp(
         }
         let appInstalled = await AppInstallations.includes(shop);
 
-        console.log(appInstalled);
-        console.log(req.originalUrl);
         if (!appInstalled && !req.originalUrl.match(/^\/exitiframe/i)) {
-            console.log('redirectToAuth');
             return redirectToAuth(req, res, app);
         }
 

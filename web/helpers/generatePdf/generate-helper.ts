@@ -62,7 +62,6 @@ export const preview = async (
     logoBase64: string,
     logoUrl?: string
 ) => {
-    console.log(templates);
     let logo: string;
     if (logoUrl) {
         logo = await getLogoBase64(logoUrl).catch((e) => {
