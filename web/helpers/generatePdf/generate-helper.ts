@@ -5,7 +5,7 @@ import { getTemplateJson, getLogoBase64 } from './fetch-templates.js';
 import { generatePdf } from './generate-pdf.js';
 import type { EnvelopeType, Records } from '.';
 import PDFMerger from 'pdf-merger-js';
-import defaultLogo from '../../assets/cl_logo';
+import defaultLogo from '../../assets/cl_logo.js';
 
 export const generate = async (
     app: Express,
