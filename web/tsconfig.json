@@ -101,7 +101,7 @@
         "skipLibCheck": true /* Skip type checking all .d.ts files. */
     },
     "include": ["./**/*"],
-    "exclude": ["./frontend/**/*"],
+    "exclude": ["./frontend/**/*", "./dist/**/*"],
     "ts-node": {
         "esm": true,
         "experimentalSpecifierResolution": "node"
