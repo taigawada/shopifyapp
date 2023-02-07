@@ -317,14 +317,18 @@ export const References = ({ data }: { data: ReferencesFetch }) => {
                 <Accordion open={editTemplate}>
                     <Layout.Section>
                         <Banner>
-                            <Text variant="bodyMd" as="p">
-                                {
-                                    '[設定] -> [ファイル]からテンプレートをアップロードし、リンクをコピーして貼り付けます。'
-                                }
-                            </Text>
-                            <Text variant="bodyMd" fontWeight="medium" as="p">
-                                テンプレートを更新するとダウンロードが正常にできなくなる可能性があります。必ずバックアップをとり、元のファイルを削除してしまわないようにしてください。
-                            </Text>
+                            <p>
+                                <Text variant="bodyMd" as="p">
+                                    {
+                                        '[設定] -> [ファイル]からテンプレートをアップロードし、リンクをコピーして貼り付けます。'
+                                    }
+                                </Text>
+                            </p>
+                            <p>
+                                <Text variant="bodyMd" fontWeight="medium" as="p">
+                                    テンプレートを更新するとダウンロードが正常にできなくなる可能性があります。必ずバックアップをとり、元のファイルを削除してしまわないようにしてください。
+                                </Text>
+                            </p>
                         </Banner>
                     </Layout.Section>
                     <Layout.AnnotatedSection

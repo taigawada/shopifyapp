@@ -145,8 +145,6 @@ export async function createApp(
         app.use(serveStatic(PROD_INDEX_PATH, { index: false }));
     }
 
-    let beforeInstallShop: string[] = [];
-
     app.use('/*', async (req, res, next) => {
         if (typeof req.query.shop !== 'string') {
             res.status(500);
@@ -165,6 +163,7 @@ export async function createApp(
         }
 
         // this section is my custom installation methods.
+        let beforeInstallShop: string[] = [];
         if (appInstalled && beforeInstallShop.includes(shop)) {
             // This is the function that is executed only during installation.
             console.log('initialized   ' + shop);
