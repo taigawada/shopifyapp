@@ -3,7 +3,7 @@ databases:
       databaseName: chocolatlumiere
       user: chocolatlumiere
       region: singapore
-
+      plan: free
 services:
     - type: web
       name: shopify-chocolatlumiere
