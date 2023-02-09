@@ -1,7 +1,0 @@
-mutation populateProduct($input: ProductInput!) {
-    productCreate(input: $input) {
-        product {
-            id
-        }
-    }
-}

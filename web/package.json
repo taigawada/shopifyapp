@@ -4,6 +4,7 @@
     "license": "UNLICENSED",
     "scripts": {
         "debug": "node --inspect-brk index.ts",
+        "predev": "ts-node codegen.ts",
         "dev": "cross-env NODE_ENV=development nodemon -L --ignore ./frontend & graphql-codegen-esm --config codegen.yml --watch admin-graphql/documents/*.graphql",
         "preserve": "tsc",
         "serve": "cross-env NODE_ENV=production node dist/index.js",
@@ -15,10 +16,12 @@
         "node": ">=14.13.1"
     },
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.266.1",
         "@pdfme/generator": "^1.1.5",
         "@prisma/client": "^3.15.2",
         "@shopify/react-form": "^2.4.1",
         "@shopify/shopify-api": "^5.0.0",
+        "bull": "^4.10.3",
         "canvas": "^2.11.0",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.6",
@@ -29,6 +32,7 @@
         "form-data": "^3.0.1",
         "lodash-es": "^4.17.21",
         "multer": "^1.4.5-lts.1",
+        "nodemailer": "^6.9.1",
         "pdf-merger-js": "^4.2.0",
         "serve-static": "^1.14.1",
         "typescript": "^4.9.5"
@@ -45,6 +49,7 @@
         "@types/lodash-es": "^4.17.6",
         "@types/multer": "^1.4.7",
         "@types/node-fetch": "^2.6.2",
+        "@types/nodemailer": "^6.4.7",
         "nodemon": "^2.0.15",
         "prettier": "^2.6.2",
         "pretty-quick": "^3.1.3",

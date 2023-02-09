@@ -6,23 +6,25 @@ import { generatePdf } from './generate-pdf.js';
 import type { EnvelopeType, Records } from '.';
 import PDFMerger from 'pdf-merger-js';
 import defaultLogo from '../../assets/cl_logo.js';
+import type { Session } from '@shopify/shopify-api/dist/auth/session/session.js';
+
+const isEnvelopeType = (value: unknown): value is 'N4template' | 'N3template' | 'LPtemplate' => {
+    const envelopeTypes = ['N4template', 'N3template', 'LPtemplate'];
+    return typeof value === 'string' && envelopeTypes.includes(value);
+};
 
 export const generate = async (
-    app: Express,
-    req: any,
-    res: any,
+    session: Session,
     records: Records,
     envelopeType: EnvelopeType,
     productName: string | undefined
 ) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'));
-    if (!session) return res.sendStatus(400);
     try {
         const [url, references] = await Promise.all([
             getTemplate(session.shop, envelopeType),
             getFixed(session.shop),
         ]);
-        if (!url[envelopeType] || !references) return res.sendStatus(400);
+        if (!url[envelopeType] || !references) throw Error;
         const [template, logo] = await Promise.all([
             getTemplateJson(url[envelopeType]),
             references.logo_image.length
@@ -37,10 +39,10 @@ export const generate = async (
         };
         const fontSizeRatio = 1;
         const result = await generatePdf(template, records, fixed, fontSizeRatio);
-        res.status(200).send(result);
+        return result;
     } catch (e) {
         console.log(e);
-        res.status(400).send(e);
+        throw e;
     }
 };
 export interface Templates {

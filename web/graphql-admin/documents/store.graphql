@@ -1,0 +1,6 @@
+query getStoreEmail {
+    shop {
+        email
+        contactEmail
+    }
+}

@@ -1,15 +1,12 @@
+import { Shopify } from '@shopify/shopify-api';
 import type { Express } from 'express';
-import { head, isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 import type { Multer } from 'multer';
+import { Graphql } from '../graphql-admin/index.js';
 import { fetchOrders } from '../helpers/fetch-orders.js';
-import {
-    preview,
-    generate,
-    LogoTextData,
-    Records,
-    Templates,
-} from '../helpers/generatePdf/index.js';
+import { preview, LogoTextData, Records, Templates } from '../helpers/generatePdf/index.js';
 import { toQueryArray } from '../helpers/utilities.js';
+import { pdfGen } from '../jobs/pdf.js';
 
 export default function mailPrintApiEndpoints(app: Express, multer: Multer) {
     const isEnvelopeType = (
@@ -19,6 +16,12 @@ export default function mailPrintApiEndpoints(app: Express, multer: Multer) {
         return typeof value === 'string' && envelopeTypes.includes(value);
     };
     app.post('/api/download', multer.none(), async (req, res) => {
+        const session = await Shopify.Utils.loadCurrentSession(
+            req,
+            res,
+            app.get('use-online-tokens')
+        );
+        if (!session) return res.sendStatus(401);
         const envelopeType = req.query.envelopeType;
         const productName = toQueryArray(req.query.productName);
         if (!isEnvelopeType(envelopeType)) {
@@ -33,7 +36,16 @@ export default function mailPrintApiEndpoints(app: Express, multer: Multer) {
         } catch (e) {
             res.status(400).send(e);
         }
-        generate(app, req, res, records, envelopeType, head(productName));
+        const gqlClient = new Graphql(session).client;
+        const store = await gqlClient.getStoreEmail();
+        await pdfGen.add('pdfGen', {
+            session: session,
+            records: records,
+            envelopeType: envelopeType,
+            productName: productName ? productName[0] : '',
+            contactEmail: store.shop.contactEmail,
+        });
+        res.sendStatus(200);
     });
     app.post('/api/preview', multer.none(), async (req, res) => {
         let templates: Templates | undefined;
