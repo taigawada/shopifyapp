@@ -1,4 +1,4 @@
-FROM node:18-bullseye-slim
+FROM node:18-slim
 
 ARG SHOPIFY_API_KEY
 ENV SHOPIFY_API_KEY=$SHOPIFY_API_KEY

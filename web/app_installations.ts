@@ -6,7 +6,7 @@ export const AppInstallations = {
     init: async (shopDomain: string) => {
         const shopSessions = await Shopify.Context.SESSION_STORAGE.findSessionsByShop!(shopDomain);
         if (!shopSessions.length || !shopSessions[0].accessToken) {
-            console.warn('Failed to install.');
+            console.log('Failed to install.');
             return;
         }
         try {
@@ -31,7 +31,6 @@ export const AppInstallations = {
                 },
             });
         } catch (e) {
-            console.log(e);
             throw e;
         }
     },

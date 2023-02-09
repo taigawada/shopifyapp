@@ -2,7 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { Shopify, LATEST_API_VERSION } from '@shopify/shopify-api';
+import { Shopify, ApiVersion } from '@shopify/shopify-api';
 
 import applyAuthMiddleware from './middleware/auth.js';
 import verifyRequest from './middleware/verify-request.js';
@@ -32,7 +32,7 @@ Shopify.Context.initialize({
     SCOPES: process.env.SCOPES!.split(','),
     HOST_NAME: process.env.HOST!.replace(/https?:\/\//, ''),
     HOST_SCHEME: process.env.HOST!.split('://')[0],
-    API_VERSION: LATEST_API_VERSION,
+    API_VERSION: process.env.API_VERSION as ApiVersion,
     IS_EMBEDDED_APP: true,
     SESSION_STORAGE:
         process.env.NODE_ENV === 'production'
@@ -173,7 +173,7 @@ export async function createApp(
             } catch (e) {
                 beforeInstallShop.push(shop);
                 if (e instanceof Error) {
-                    console.warn(e.message);
+                    console.log(e.message);
                 }
             }
         }
