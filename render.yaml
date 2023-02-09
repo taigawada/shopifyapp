@@ -1,27 +1,27 @@
 databases:
-    - name: shopify-chocolatlumiere
+    - name: chocolatlumiere-postgres
       databaseName: chocolatlumiere
       user: chocolatlumiere
       region: singapore
       plan: free
 services:
     - type: web
-      name: shopify-chocolatlumiere
+      name: chocolatlumiere
       env: docker
       region: singapore
       plan: free
       envVars:
           - key: DATABASE_URL
             fromDatabase:
-                name: shopify-chocolatlumiere
+                name: chocolatlumiere-postgres
                 property: connectionString
           - key: REDIS_URL
             fromService:
                 type: redis
-                name: shopify-chocolatlumiere
+                name: chocolatlumiere-redis
                 property: connectionString
     - type: redis
-      name: shopify-chocolatlumiere
+      name: chocolatlumiere-redis
       ipAllowList:
           - source: 0.0.0.0/0
             description: everywhere
