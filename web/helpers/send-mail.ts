@@ -26,7 +26,7 @@ export const sendDownloadMail = async (to: string, filename: string, url: string
         await transporter.sendMail({
             from: process.env.GOOGLE_MAILADDRESS!,
             to: to,
-            subject: 'Message',
+            subject: 'ダウンロードの準備ができました',
             html: html,
         });
         return;
