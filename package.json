@@ -12,7 +12,8 @@
     },
     "dependencies": {
         "@shopify/app": "3.20.1",
-        "@shopify/cli": "3.20.1"
+        "@shopify/cli": "3.20.1",
+        "prisma": "^4.10.1"
     },
     "author": "taigawada"
 }
