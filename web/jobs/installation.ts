@@ -1,5 +1,5 @@
 import Bull from 'bull';
-import { AppInstallations } from '../app_installations';
+import { AppInstallations } from '../app_installations.js';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 const CONCURRENCY = process.env.REDIS_CONCURRENCY || '2';
