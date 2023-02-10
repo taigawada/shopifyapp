@@ -210,6 +210,7 @@ export const templateUpload = async (shopDomain: string, accessToken: string) =>
             })
         );
     } catch (e) {
+        console.log(e);
         return Promise.reject(e);
     }
     const createdFilesMutation = await client.imageCreate({

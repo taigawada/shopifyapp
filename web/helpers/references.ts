@@ -47,7 +47,7 @@ export const getReference = async (app: Express, req: Request, res: Response) =>
             [N4template, N3template, LPtemplate].map(async (templateUrl) => {
                 try {
                     const response = await fetch(templateUrl);
-                    if (!response.ok) throw Error('invalid response.');
+                    if (!response.ok) Promise.reject('invalid response.');
                 } catch (e) {
                     Promise.reject(e);
                 }

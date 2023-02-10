@@ -29,7 +29,7 @@ export default function LandingPage() {
     const { data, isLoading } = useAppQuery<Settings>('/api/reference');
     return (
         <Page fullWidth>
-            <TitleBar title="chocolatlumiere" />
+            <TitleBar title="chocolatlumière" />
             <Layout>
                 <Layout.Section secondary>
                     <Card title="在庫管理" sectioned>

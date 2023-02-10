@@ -11,6 +11,7 @@ import redirectToAuth from './helpers/redirect-to-auth.js';
 // import { BillingInterval } from './helpers/ensure-billing.js';
 
 import { AppInstallations } from './app_installations.js';
+import { installation } from './jobs/installation.js';
 
 import generalApiEndpoints from './middleware/general-api.js';
 import mailPrintApiEndpoints from './middleware/mail-print-api.js';
@@ -52,6 +53,8 @@ Shopify.Context.initialize({
 Shopify.Webhooks.Registry.addHandler('APP_UNINSTALLED', {
     path: '/api/webhooks',
     webhookHandler: async (_topic, shop, _body) => {
+        const installJob = await installation.getJob(shop);
+        if (installJob) await installJob.remove();
         await AppInstallations.delete(shop);
     },
 });
@@ -121,6 +124,23 @@ export async function createApp(
     mailPrintApiEndpoints(app, multer);
     generalApiEndpoints(app, multer);
 
+    app.get('/api/installtionState', async (req, res) => {
+        const session = await Shopify.Utils.loadCurrentSession(
+            req,
+            res,
+            app.get('use-online-tokens')
+        );
+        if (!session) return res.sendStatus(401);
+        let job = await installation.getJob(session.shop);
+        if (job === null) {
+            res.status(200).send({ state: 'completed' });
+        } else {
+            let state = await job.getState();
+            let reason = job.failedReason;
+            res.status(200).send({ state, reason });
+        }
+    });
+
     // All endpoints after this point will have access to a request.body
     // attribute, as a result of the express.json() middleware
     app.use(express.json());
@@ -144,7 +164,7 @@ export async function createApp(
         app.use(compression());
         app.use(serveStatic(PROD_INDEX_PATH, { index: false }));
     }
-
+    // let beforeInstallShop: string[] = [];
     app.use('/*', async (req, res, next) => {
         if (typeof req.query.shop !== 'string') {
             res.status(500);
@@ -152,35 +172,19 @@ export async function createApp(
         }
 
         const shop = Shopify.Utils.sanitizeShop(req.query.shop);
-
         if (!shop) {
             return res.status(500);
         }
         let appInstalled = await AppInstallations.includes(shop);
 
-        if (!appInstalled && !req.originalUrl.match(/^\/exitiframe/i)) {
-            return redirectToAuth(req, res, app);
+        // this section is my custom installation methods.
+        const appInitialized = await installation.getJob(shop);
+        if (appInstalled && appInitialized === null) {
+            await installation.add('installation', { shop }, { jobId: shop, removeOnFail: true });
         }
 
-        // this section is my custom installation methods.
-        let beforeInstallShop: string[] = [];
-        if (appInstalled && beforeInstallShop.includes(shop)) {
-            // This is the function that is executed only during installation.
-            console.log('initialized   ' + shop);
-            try {
-                beforeInstallShop = beforeInstallShop.filter((value) => value !== shop);
-                await AppInstallations.init(shop);
-            } catch (e) {
-                beforeInstallShop.push(shop);
-                if (e instanceof Error) {
-                    console.log(e.message);
-                }
-            }
-        }
-        if (!appInstalled) {
-            if (!beforeInstallShop.includes(shop)) {
-                beforeInstallShop.push(shop);
-            }
+        if (!appInstalled && !req.originalUrl.match(/^\/exitiframe/i)) {
+            return redirectToAuth(req, res, app);
         }
 
         if (Shopify.Context.IS_EMBEDDED_APP && req.query.embedded !== '1') {
