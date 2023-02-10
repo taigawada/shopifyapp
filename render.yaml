@@ -10,6 +10,7 @@ services:
       env: docker
       region: singapore
       plan: free
+      startCommand: 'npm run serve'
       envVars:
           - key: DATABASE_URL
             fromDatabase:

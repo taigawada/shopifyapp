@@ -84,19 +84,9 @@ export const DownloadPDF = ({ orderData }: { orderData: GetOrders }) => {
             toasts.showToast('ダウンロードに失敗しました', true);
             return;
         }
-        // const arrayBuffer = await response.arrayBuffer();
-        // const url = URL.createObjectURL(new Blob([arrayBuffer], { type: 'application/pdf' }));
-        // const link = document.createElement('a');
-        // link.target = '_blank';
-        // link.download = `${['長型4号', '長型3号', 'レターパック'][selected]} ${format(
-        //     new Date(),
-        //     'yyyy-MM-dd HH.mm.ss'
-        // )}.pdf`;
-        // link.href = url;
-        // link.click();
-        // URL.revokeObjectURL(url);
         setIsdownloading(false);
-        toasts.showToast('ダウンロードが完了しました');
+        const email = await response.text();
+        toasts.showToast(`ファイルは「${email}」に送信されます。`);
     };
 
     const selectBoxContentWrapper = css({

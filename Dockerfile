@@ -8,4 +8,3 @@ COPY web .
 RUN npm install
 RUN npm run build
 RUN cd frontend && npm install && npm run build
-CMD ["npm", "run", "serve"]

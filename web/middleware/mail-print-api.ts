@@ -43,9 +43,9 @@ export default function mailPrintApiEndpoints(app: Express, multer: Multer) {
             records: records,
             envelopeType: envelopeType,
             productName: productName ? productName[0] : '',
-            contactEmail: store.shop.contactEmail,
+            contactEmail: store.shop.email,
         });
-        res.sendStatus(200);
+        res.status(200).send(store.shop.email);
     });
     app.post('/api/preview', multer.none(), async (req, res) => {
         let templates: Templates | undefined;
